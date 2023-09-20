@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Calibri:400,700,400italic,700italic">
+	
+	<style>
+
+        table thead tr td{
+			font-family: 'Calibri'!important;
+			font-size: 25px!important;
+			border: 2px solid #000;
+			padding:5px;
+			margin:0px!important;
+			border-spacing: -10px!important;
+            font-weight: 600;
+			
+		}
+
+        table  tr td{
+			font-family: 'Calibri'!important;
+			font-size: 25px!important;
+			margin:0px!important;
+			border-spacing: -10px!important;
+			
+		}
+
+        .text-center{
+            text-align:center;
+        }
+
+        .text-right{
+            text-align:right;
+        }
+
+        .bold{
+            font-weight: 600;
+        }
+
+		table { border-collapse: collapse; }
+	</style>
+</head>
+<body style="font-family:Calibri;height:800px;font-size:25px!important;">
+
+    <div class="text-center">
+        <div>
+            {% if companyLogo != '' %}
+                <img src='data:image/jpeg;base64,{{ companyLogo }}' style="width:120px;"/>
+            {% endif %}
+        </div>
+        <div>
+            <strong>{{ medicalRecord.admissionpet.admission.branch.company.description }}</strong>
+        </div>
+         <div>
+            <strong> Contact No.:{{ medicalRecord.admissionpet.admission.branch.company.contactno }}</strong>
+        </div>
+        <div>
+            <strong> Email:{{ medicalRecord.admissionpet.admission.branch.company.email }}</strong>
+        </div>
+    </div>
+    </div>
+    <div style='margin-top:20px;'>
+        <table  width="100%">
+            <tbody>
+                <tr>
+                    <td><strong>Owner :</strong> {{ medicalRecord.admissionpet.admission.client.fullname }}</td>
+                    <td class='text-right'><strong>Date :</strong>{{ "now"|date('m/d/Y') }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Pet :</strong> {{ medicalRecord.admissionpet.pet.name }}</td>
+                    <td class='text-right'><strong>Pet Age :</strong> {{ medicalRecord.admissionpet.pet.birthdate ? medicalRecord.admissionpet.pet.age : '' }}</td>
+                </tr>
+                  <tr>
+                    <td><strong>Breed :</strong> {{ medicalRecord.admissionpet.pet.breed ? medicalRecord.admissionpet.pet.breed.description : '' }}</td>
+                    <td class='text-right'><strong>Gender :</strong> {{ medicalRecord.admissionpet.pet.gender }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="width:1200px;margin-top:50px;">
+        <div style='float:left;width:120px;'>
+            <img src='data:image/jpeg;base64,{{ rxSymbol }}' style="width:80px;"/>
+        </div>
+        <div style="float:left;margin-left:30px;"> 
+            {% for medicalRecordPrescriptionItem in medicalRecord.medicalRecordPrescriptionInventoryItems %}
+                <div>{{ medicalRecordPrescriptionItem.inventoryitem.item.description }} {{ medicalRecordPrescriptionItem.quantity }} {{ medicalRecordPrescriptionItem.remarks }}</div></br>
+            {% endfor %}
+        </div>
+    </div>
+    <div style="clear:both"></div>
+    <div style="position:absolute;bottom:10px;width:1000px;">
+        <div style="float:right;">
+            <div style="width:300px;text-align:center;">{{ medicalRecord.admissionpet.admission.attendingvet.fullname}}</div>
+            <div style="width:300px;text-align:center;border-top:1px solid #000000;"><strong>Attending Veterinarian</strong></div>
+            <table style="margin-top:20px;">
+                <tr>
+                    <td class="text-right"><strong>PRC License No.:</strong></td>
+                    <td style="border-bottom:1px solid #000000!important;width:120px;">{{ medicalRecord.admissionpet.admission.attendingvet.prcNo }}</td>
+                </tr>
+                <tr>
+                    <td class="text-right"><strong>PTR:</strong></td>
+                    <td style="border-bottom:1px solid #000000!important;width:120px;">{{ medicalRecord.admissionpet.admission.attendingvet.ptr }}</td>
+                </tr>
+                <tr>
+                    <td class="text-right"><strong>TIN:</strong></td>
+                    <td style="border-bottom:1px solid #000000!important;width:120px;">{{ medicalRecord.admissionpet.admission.attendingvet.tinno }}</td>
+                </tr>
+                <tr>
+                    <td class="text-right"><strong>S2:</strong></td>
+                    <td style="border-bottom:1px solid #000000!important;width:120px;">{{ medicalRecord.admissionpet.admission.attendingvet.s2 }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

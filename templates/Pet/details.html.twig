@@ -1,0 +1,241 @@
+{% extends 'content.html.twig' %}
+
+{% block pageContent %}
+    
+    <div class="content-wrapper" style="min-height: 847px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">{{ page_title }}</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                        
+                            <li class="breadcrumb-item "><a href="{{ path('pet_index')}}">Pet</a></li>
+                            <li class="breadcrumb-item active">{{ page_title }}</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card card-primary">
+                            <div class="card-body">
+                                <div> <a href="{{ pet.getFileWebPath }}" target="_blank" ><img src="{{ pet.getFileWebPath }}" width="120px;"/></a></div>
+                                <div><strong>Name: </strong> {{ pet.name}}</div>
+                                <div><strong>Breed: </strong> {{ pet.breed ? pet.breed.description : ''}}</div>
+                                <div><strong>Sex: </strong> {{ pet.gender}}</div>
+                                <div><strong>Color: </strong> {{ pet.colorMarkings}}</div>
+                                <hr>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-9">
+                        <div class='container'>
+                            <div class='row'>
+                                <div class='col-12'>
+                                    <div class="card">
+                                        <div class="card-header p-2">
+                                            <ul class="nav nav-pills">
+                                                <li class="nav-item"><a class="nav-link active" href="#vaccination" data-toggle="tab">Vaccination</a></li>
+                                                <li class="nav-item"><a class="nav-link" href="#consultation" data-toggle="tab">Consultation</a></li>
+                                                <li class="nav-item"><a class="nav-link" href="#laboratory" data-toggle="tab">Laboratory</a></li>
+                                                <li class="nav-item"><a class="nav-link" href="#spayn" data-toggle="tab">Spay/Neuter Surgery </a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="tab-content">
+                                                <div class="tab-pane active" id="vaccination">
+                                                    <div class="col-12">
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                {% include 'flash_message.html.twig' %}
+                                                                {% if userData.type == 'Super Admin' or 'Pet Details Medical Records' in userData.accesses %}
+                                                                    <div  class="dataTables_wrapper dt-bootstrap4" >
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12">
+                                                                                <table id="vaccination-datalist" class="table dataTable dt-responsive nowrap" width="100%">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th>Date</th>
+                                                                                            <th>Primary Complain</th>
+                                                                                            <th>Action</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody></tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div> 
+                                                                    </div>
+                                                                {% else %}
+                                                                    You don't have an access to view this data.
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane" id="consultation">
+                                                    <div class="col-12">
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                {% include 'flash_message.html.twig' %}
+                                                                {% if userData.type == 'Super Admin' or 'Pet Details Medical Records' in userData.accesses %}
+                                                                    <div  class="dataTables_wrapper dt-bootstrap4" >
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12">
+                                                                                <table id="consultation-datalist" class="table dataTable dt-responsive nowrap" width="100%">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th>Date</th>
+                                                                                            <th>Primary Complain</th>
+                                                                                            <th>Action</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody></tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div> 
+                                                                    </div>
+                                                                {% else %}
+                                                                    You don't have an access to view this data.
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane" id="laboratory">
+                                                    <div class="col-12">
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                {% include 'flash_message.html.twig' %}
+                                                                {% if userData.type == 'Super Admin' or 'Pet Details Medical Records' in userData.accesses %}
+                                                                    <div  class="dataTables_wrapper dt-bootstrap4" >
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12">
+                                                                                <table id="laboratory-datalist" class="table dataTable dt-responsive nowrap" width="100%">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th>Date</th>
+                                                                                            <th>Primary Complain</th>
+                                                                                            <th>Action</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody></tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div> 
+                                                                    </div>
+                                                                {% else %}
+                                                                    You don't have an access to view this data.
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane" id="spayn">
+                                                    <div class="col-12">
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                {% include 'flash_message.html.twig' %}
+                                                                {% if userData.type == 'Super Admin' or 'Pet Details Medical Records' in userData.accesses %}
+                                                                    <div  class="dataTables_wrapper dt-bootstrap4" >
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12">
+                                                                                <table id="spayn-datalist" class="table dataTable dt-responsive nowrap" width="100%">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th>Date</th>
+                                                                                            <th>Primary Complain</th>
+                                                                                            <th>Action</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody></tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div> 
+                                                                    </div>
+                                                                {% else %}
+                                                                    You don't have an access to view this data.
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='row'>
+                                <div class='col-12'>
+                                    <div class="card">
+                                        <div class="card-header p-2">
+                                            <ul class="nav nav-pills">
+                                                <li class="nav-item"><a class="nav-link active" href="#form-cabinet" data-toggle="tab">Form Cabinet</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="tab-content">
+                                                <div class="tab-pane active" id="form-cabinet">
+                                                    <div class="col-12">
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                {% include 'flash_message.html.twig' %}
+                                                                {% if userData.type == 'Super Admin' or 'Pet Details Cabinet Form' in userData.accesses %}
+                                                                    <div  class="dataTables_wrapper dt-bootstrap4" >
+                                                                        <div class="row">
+                                                                            <div class="col-sm-12">
+                                                                               {% if userData.type == 'Super Admin' or 'Pet Details Cabinet Form New' in userData.accesses %}
+                                                                                    <div class="text-right"><a href="{{ path('pet_cabinet_form', {pet: pet.idencoded, action : 'n' , id : '0' })}}">New Form</a></div>
+                                                                                {% endif %}
+                                                                                <table id="cabinetForm-datalist" class="table dataTable dt-responsive nowrap" width="100%">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th>Date</th>
+                                                                                            <th>Form Type</th>
+                                                                                            <th>File</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody></tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div> 
+                                                                    </div>
+                                                                {% else %}
+                                                                    You don't have an access to view this data.
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    {% include 'js.html.twig' %}
+
+    <script language="javascript">
+        //<![CDATA[
+        $(document).ready(function(){
+            pet_details.settings.petId =  '{{ pet.id }}';
+            pet_details.settings.medicalRecordAjaxListUrl = '{{ path("medical_record_ajax_list")}}';
+            pet_details.settings.sendMedicalRecordAjaxUrl = "{{ path('pet_ajax_send_medical_record_form')}}";   
+            pet_details.settings.cabinetFormAjaxListUrl = "{{ path('pet_ajax_list_cabinet_form')}}";   
+            pet_details.init();
+        });
+        //]]>
+    </script>
+{% endblock %}

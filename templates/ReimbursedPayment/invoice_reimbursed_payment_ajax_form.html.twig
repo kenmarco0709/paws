@@ -1,0 +1,52 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{ page_title }}</h5>
+</div>
+<div class="modal-body">
+    <div class="card card-primary">
+         <div class="alert alert-danger errors d-none" role="alert" >
+       
+        </div>
+        <div class="alert alert-success success d-none" role="alert" >
+       
+        </div>
+        <div class="card-body">
+
+            <h5>Invoice # {{ invoice.id}}</h5>
+            Reimbursable Amount: {{ invoice.amountdue < 0 ? invoice.amountdue|replace({'-':''}) : 0 }}
+            <input type='hidden' id="remaining_balance" value="{{invoice.amountdue}}"> 
+            <form id="reimbursed_paymentForm">
+                <div class="form-group">
+                    {{ form_label(form.amount) }}
+                    {{ form_widget(form.amount) }}
+                </div>
+                <div class="card-footer text-right">
+                    <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary"  name="action" >Submit</button>
+                </div>
+
+                {{ form_widget(form.invoice) }}
+                {{ form_widget(form.action) }}
+                {{ form_widget(form.id) }}
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% include 'js.html.twig' %}
+
+<script language="javascript">
+    //<![CDATA[
+    $(document).ready(function(){
+
+        global.mask();
+        invoice_reimbursed_payment_form.settings.reimbursedPaymentProcessFormAjaxUrl = '{{ path('reimbursed_payment_invoice_ajax_form_process') }}';
+        invoice_reimbursed_payment_form.init();
+    });
+    //]]>
+</script>
+
+
+    
+
+

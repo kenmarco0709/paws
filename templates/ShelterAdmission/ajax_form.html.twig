@@ -1,0 +1,141 @@
+{% set userData = app.session.get('userData') %} 
+
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{ page_title }}</h5>
+</div>
+<div class="modal-body">
+    <div class="card card-primary">
+         <div class="alert alert-danger errors d-none" role="alert" >
+       
+        </div>
+        <div class="alert alert-success success d-none" role="alert" >
+       
+        </div>
+        <div class="card-body">
+          <form  id="form" enctype='multipart/form-data'>
+                <div class="container-fluid">
+                    <div class='row'>
+                        <div class='col-5'>
+                            <div class="card">
+                                <div class="card-body">
+                                    
+                                    <div class='form-group row'>
+                                        {{ form_label(form.facility_desc)}}
+                                        <div class='col-9'>
+                                            {{ form_widget(form.facility_desc)}}
+                                            {{ form_widget(form.facility)}}
+                                        </div>
+                                    </div>
+                                    <div class='form-group row'>
+                                        {{ form_label(form.admission_date)}}
+                                        <div class='col-9'>
+                                            {{ form_widget(form.admission_date)}}
+                                        </div>
+                                    </div>
+                                    <div class='form-group row'>
+                                        {{ form_label(form.rescuer_name)}}
+                                        <div class='col-9'>
+                                            {{ form_widget(form.rescuer_name)}}
+                                        </div>
+                                    </div>
+                                    <div class='form-group row'>
+                                        {{ form_label(form.rescuer_contact)}}
+                                        <div class='col-9'>
+                                            {{ form_widget(form.rescuer_contact)}}
+                                        </div>
+                                    </div>
+                                    <div class='form-group row'>
+                                        {{ form_label(form.rescue_date)}}
+                                        <div class='col-9'>
+                                            {{ form_widget(form.rescue_date)}}
+                                        </div>
+                                    </div>
+                                    <div class='form-group row'>
+                                        {{ form_label(form.rescue_place)}}
+                                        <div class='col-9'>
+                                            {{ form_widget(form.rescue_place)}}
+                                        </div>
+                                    </div>
+                                    <div class='form-group row'>
+                                        {{ form_label(form.rescue_story)}}
+                                        <div class='col-9'>
+                                            {{ form_widget(form.rescue_story)}}
+                                        </div>
+                                    </div>
+                                
+                                    <div class='form-group row'>
+                                        {{ form_label(form.returned_reason)}}
+                                        <div class='col-9'>
+                                            {{ form_widget(form.returned_reason)}}
+                                        </div>
+                                    </div>
+                                    <div class='form-group row'>
+                                        {{ form_label(form.returned_date)}}
+                                        <div class='col-9'>
+                                            {{ form_widget(form.returned_date)}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-right">
+                                    <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn just-continue btn-primary" name="action" value="{{ action }}" data-message="Are you sure you want to save this information?">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>               
+                        
+                </div>
+                {{ form_widget(form.pet) }}
+                {{ form_widget(form.admission_type) }}
+                {{ form_widget(form.branch) }}
+                {{ form_widget(form.action) }}
+                {{ form_widget(form.id) }}
+                {{ form_widget(form._token) }}
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    
+    var shelterAdmissionAjaxFormProcessUrl = "{{ path('shelter_admission_ajax_form_process')}}";
+    var facilityAutcompleteUrl = "{{ path('facility_autocomplete') }}"; 
+    global.init();
+   global.autocomplete.bind(facilityAutcompleteUrl,'#shelter_admission_form_facility_desc','#shelter_admission_form_facility'); 
+
+
+
+    $('.close-modal').unbind('click').bind('click',function(){
+        $('.modal').modal('hide');
+    });
+
+    $('#form').submit(function(e){
+
+        e.preventDefault();
+        _this = $(this);
+        _this.find(':input[type=submit]').prop('disabled', true);
+        var formData = $(this).serialize();
+        $.ajax({
+            url: shelterAdmissionAjaxFormProcessUrl,
+            data: formData, 
+            type: "post",
+            dataType: "JSON",
+            success: function(r){
+                if(r.success){
+ 
+                    $.toaster({ message : r.msg, title : '', priority : 'success' });
+                    $('.modal').modal('hide');
+
+                    if(typeof shelter_admission_details  != 'undefined'){
+                        shelter_admission_details.loadDetailsPart();
+                        shelter_admission_details.removeActionBtn();
+                    }
+
+                } else {
+                    $.toaster({ message : r.msg, title : '', priority : 'danger' });
+                }
+            }
+        });
+    });
+</script>

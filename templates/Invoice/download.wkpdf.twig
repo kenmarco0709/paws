@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Calibri:400,700,400italic,700italic">
+	
+	<style>
+
+        table thead tr td{
+			font-family: 'Calibri'!important;
+			font-size: 22px;
+			border: 2px solid #000;
+			padding:5px;
+			margin:0px!important;
+			border-spacing: -10px!important;
+            font-weight: 600;
+			
+		}
+
+        table  tr td{
+			font-family: 'Calibri'!important;
+			font-size: 22px;
+			margin:0px!important;
+			border-spacing: -10px!important;
+			
+		}
+
+        .text-center{
+            text-align:center;
+        }
+
+        .text-right{
+            text-align:right;
+        }
+
+        .bold{
+            font-weight: 600;
+        }
+
+		table { border-collapse: collapse; }
+
+        .mt-0{
+            margin-top: 10px;
+        }
+
+        .mt-1{
+            margin-top: 20px;
+        }
+        .mt-5{
+            margin-top: 60px;
+        }
+	</style>
+</head>
+<body style="font-family:Calibri;font-size:22px;">
+
+    <div class='text-right'>
+        <h3>Billing Invoice</h3>
+        <div class='text-right bold'>{{ invoice.branch.company.description|upper }}</div>
+        <div class='text-right bold'>{{ invoice.branch.company.address|upper }}</div>
+        <div class='text-right bold'>{{ invoice.branch.company.contactno|upper }}</div>
+        <div class='text-right bold'>{{ invoice.branch.company.email }}</div>
+    </div>
+    <div class='mt-1'>
+        <table  width="100%">
+            <tbody>              
+                <tr>
+                    <td><b>Invoice #:</b> {{ invoice.id }}</td>
+                    <td><b>Client:</b> {{ invoice.client.fullname}}</td>
+                </tr>
+                <tr>
+                    <td><b>Date:</b>{{ invoice.invoicedate|date('m/d/Y') }} </td>
+                    <td><b>Address:</b> {{ invoice.client.address}}</td>
+                </tr>
+                 <tr>
+                    <td><b>Status:</b> {{ invoice.status}}</td>
+                    <td>&nbsp;</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class='mt-5'>
+        <div><h3>Items And Services</h3></div>
+        <table  width="100%">
+            <thead>              
+                <tr>
+                    <td class='text-center'><b>Description</b></td>
+                    <td class='text-center'><b>Quantity</b></td>
+                    <td class='text-center'><b>Price</b></td>
+                    <td class='text-center'><b>Disc. Amt.</b></td>
+                    <td class='text-center'><b>Amount</b></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% set totalPrice = 0 %}
+                {% set totalItemServiceDiscountAmount = 0 %}
+                {% set totamAmount = 0 %}
+                {% for invoiceAdmissionInventoryItem in invoice.invoiceadmissioninventoryitems %}
+                    {% set totalPrice = totalPrice + invoiceAdmissionInventoryItem.quantity * invoiceAdmissionInventoryItem.inventoryitem.sellingprice %}
+                    {% set totalItemServiceDiscountAmount = totalItemServiceDiscountAmount + (((invoiceAdmissionInventoryItem.quantity * invoiceAdmissionInventoryItem.inventoryitem.sellingprice) * invoiceAdmissionInventoryItem.discount) / 100) %}
+                    {% set totamAmount = totamAmount + ((invoiceAdmissionInventoryItem.quantity * invoiceAdmissionInventoryItem.inventoryitem.sellingprice) - (((invoiceAdmissionInventoryItem.quantity * invoiceAdmissionInventoryItem.inventoryitem.sellingprice) * invoiceAdmissionInventoryItem.discount) / 100)) %}
+                    <tr>
+                        <td>{{ invoiceAdmissionInventoryItem.inventoryitem.item.description}}</td>
+                        <td class='text-right'> {{invoiceAdmissionInventoryItem.quantity }}</td>
+                        <td class='text-right'> {{ invoiceAdmissionInventoryItem.inventoryitem.sellingprice }}</td>
+                        <td class='text-right'>{{ ((invoiceAdmissionInventoryItem.quantity * invoiceAdmissionInventoryItem.inventoryitem.sellingprice) * invoiceAdmissionInventoryItem.discount) / 100 }}</td>
+                        <td class='text-right'>{{ (invoiceAdmissionInventoryItem.quantity * invoiceAdmissionInventoryItem.inventoryitem.sellingprice) - (((invoiceAdmissionInventoryItem.quantity * invoiceAdmissionInventoryItem.inventoryitem.sellingprice) * invoiceAdmissionInventoryItem.discount) / 100) }}</td>
+                    </tr>
+                {% endfor %}
+                {% for invoiceInventoryItem in invoice.invoiceinventoryitems %}
+                    {% set totalPrice = totalPrice + invoiceInventoryItem.quantity * invoiceInventoryItem.inventoryitem.sellingprice %}
+                    {% set totalItemServiceDiscountAmount = totalItemServiceDiscountAmount + (((invoiceInventoryItem.quantity * invoiceInventoryItem.inventoryitem.sellingprice) * invoiceInventoryItem.discount) / 100) %}
+                    {% set totamAmount = totamAmount + ((invoiceInventoryItem.quantity * invoiceInventoryItem.inventoryitem.sellingprice) - (((invoiceInventoryItem.quantity * invoiceInventoryItem.inventoryitem.sellingprice) * invoiceInventoryItem.discount) / 100)) %}
+
+                    <tr>
+                        <td>{{ invoiceInventoryItem.inventoryitem.item.description}}</td>
+                        <td class='text-right'> {{invoiceInventoryItem.quantity }}</td>
+                        <td class='text-right'> {{invoiceInventoryItem.inventoryitem.sellingprice }}</td>
+                        <td class='text-right'>{{ ((invoiceInventoryItem.quantity * invoiceInventoryItem.inventoryitem.sellingprice) * invoiceInventoryItem.discount) / 100 }}</td>
+                        <td class='text-right'>{{ (invoiceInventoryItem.quantity * invoiceInventoryItem.inventoryitem.sellingprice) - (((invoiceInventoryItem.quantity * invoiceInventoryItem.inventoryitem.sellingprice) * invoiceInventoryItem.discount) / 100) }}</td>
+                    </tr>
+                {% endfor %}
+                {% for invoiceAdmissionService in invoice.invoiceadmissionservices %}
+                    {% set totalPrice = totalPrice + invoiceAdmissionService.quantity * invoiceAdmissionService.service.price %}
+                    {% set totalItemServiceDiscountAmount = totalItemServiceDiscountAmount + (((invoiceAdmissionService.quantity * invoiceAdmissionService.service.price) * invoiceAdmissionService.discount) / 100) %}
+                    {% set totamAmount = totamAmount + ((invoiceAdmissionService.quantity * invoiceAdmissionService.service.price) - (((invoiceAdmissionService.quantity * invoiceAdmissionService.service.price) * invoiceAdmissionService.discount) / 100)) %}
+
+                    <tr>
+                        <td>{{ invoiceAdmissionService.service.description}}</td>
+                        <td class='text-right'> {{invoiceAdmissionService.quantity }}</td>
+                        <td class='text-right'> {{invoiceAdmissionService.service.price }}</td>
+                        <td class='text-right'>{{ ((invoiceAdmissionService.quantity * invoiceAdmissionService.service.price) * invoiceAdmissionService.discount) / 100 }}</td>
+                        <td class='text-right'>{{ (invoiceAdmissionService.quantity * invoiceAdmissionService.service.price) - (((invoiceAdmissionService.quantity * invoiceAdmissionService.service.price) * invoiceAdmissionService.discount) / 100) }}</td>
+                    </tr>
+                {% endfor %}
+                {% for invoiceService in invoice.invoiceservices %}
+                    
+                    {% set totalPrice = totalPrice + invoiceService.quantity * invoiceService.service.price %}
+                    {% set totalItemServiceDiscountAmount = totalItemServiceDiscountAmount + (((invoiceService.quantity * invoiceService.service.price) * invoiceService.discount) / 100) %}
+                    {% set totamAmount = totamAmount + ((invoiceService.quantity * invoiceService.service.price) - (((invoiceService.quantity * invoiceService.service.price) * invoiceService.discount) / 100)) %}
+
+                    <tr>
+                        <td>{{ invoiceService.service.description}}</td>
+                        <td class='text-right'> {{invoiceService.quantity }}</td>
+                        <td class='text-right'> {{invoiceService.service.price }}</td>
+                        <td class='text-right'>{{ ((invoiceService.quantity * invoiceService.service.price) * invoiceService.discount) / 100 }}</td>
+                        <td class='text-right'>{{ (invoiceService.quantity * invoiceService.service.price) - (((invoiceService.quantity * invoiceService.service.price) * invoiceService.discount) / 100) }}</td>
+                    </tr>
+                {% endfor %}
+                    <tr>
+                        <td class='text-right' colspan="4"><b>Total:</b> {{ totalItemServiceDiscountAmount|number_format(2, '.', ',') }}</td>
+                        <td class='text-right'>{{ totamAmount|number_format(2, '.', ',') }}</td>
+                    </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class='mt-2'>
+        <div><h3>Payments</h3></div>
+        <table  width="100%">
+            <thead>              
+                <tr>
+                    <td class='text-center'><b>Date</b></td>
+                    <td class='text-center'><b>Payment Type</b></td>
+                    <td class='text-center'><b>Reference No.</b></td>
+                    <td class='text-center'><b>Amount</b></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% set totalPayment = 0 %}
+                {% for payment in invoice.payments %}
+                
+                    {% set totalPayment = totalPayment + payment.amount  %}
+                    <tr>
+                        <td>{{ payment.paymentdate|date('m/d/Y') }}</td>
+                        <td class='text-center'>{{ payment.paymenttype.description }}</td>
+                        <td class='text-right'>{{ payment.referenceno }}</td>
+                        <td class='text-right'>{{ payment.amount }}</td>
+
+                    </tr>
+                {% endfor %}
+
+                {% for payment in invoice.reimbursedpayments %}
+                
+                    {% set totalPayment = totalPayment - payment.amount  %}
+                    <tr>
+                        <td>{{ payment.createdat|date('m/d/Y') }}</td>
+                        <td class='text-center'> Cash </td>
+                        <td class='text-right'> - {{ payment.amount }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td class='text-right' colspan="3"><b>Total:</b> {{ totalPayment|number_format(2, '.', ',') }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+     <div class='mt-1'>
+        <div><h3>Invoice Breakdown</h3></div>
+        <table  width="100%">
+            <tbody>
+                <tr>
+                    <td class='text-right'><b>Total Amount Due:</b></td>
+                    <td class='text-right'>{{ totamAmount|number_format(2, '.', ',') }}</td>
+                </tr>
+                <tr>
+                    <td class='text-right'><b>Total Item And Service Discount:</b></td>
+                    <td class='text-right'>{{ totalItemServiceDiscountAmount|number_format(2, '.', ',') }}</td>
+                </tr>
+                <tr>
+                    <td class='text-right'><b>Total Invoice Discount:</b></td>
+                    <td class='text-right'>{{ (totamAmount * invoice.discount) / 100 }}</td>
+                </tr>
+                <tr>
+                    <td class='text-right'><b>Total Payment Amount:</b></td>
+                    <td class='text-right'>{{ totalPayment|number_format(2, '.',',') }}</td>
+                </tr>
+                 <tr>
+                    <td class='text-right'><b>Remaining Balance:</b></td>
+                    <td class='text-right'>{{ ((totamAmount - ((totamAmount * invoice.discount) / 100) ) - totalPayment )|number_format(2, '.',',') }}</td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
+
+    <div style="width:1200px;margin-top:120px">
+        <div style="float:right;">
+                <div style="width:300px;text-align:center;">{{ userData.fullName}}</div>
+                <div style="width:300px;text-align:center;border-top:1px solid #000000;"><strong>Prepared by:</strong></div>
+        </div>
+    </div>
+</body>
+</html>

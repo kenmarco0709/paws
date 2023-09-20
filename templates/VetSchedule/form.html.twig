@@ -1,0 +1,119 @@
+{% extends 'content.html.twig' %}
+
+{% block pageContent %}
+    
+    <div class="content-wrapper" style="min-height: 847px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-12">
+                        <h1 class="m-0">{{ page_title }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <form method="POST" action="{{ path('vet_schedule_form' , { action :action , id: id})}}" enctype='multipart/form-data'>
+                {% include 'flash_message.html.twig' %}
+                <div class="container-fluid">
+                    <div class='row'>
+                        <div class='col-5'>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class='form-group row'>
+                                        <div class='col-9'>
+                                            {{ form_label(form.schedule_type)}}
+                                            {{ form_widget(form.schedule_type)}}
+                                        </div>
+                                    </div>
+                                       <div class='form-group row'>
+                                        <div class='col-9'>
+                                            {{ form_label(form.vet)}}
+                                            {{ form_widget(form.vet)}}
+                                            {{ form_widget(form.vet_desc)}}
+                                        </div>
+                                    </div>
+                                    <div class='form-group row'>
+                                         <div class='col-6'>
+                                            {{ form_label(form.schedule_date_from)}}
+                                            {{ form_widget(form.schedule_date_from, { value : dateToSched != '' ? dateToSched : vetSchedule.scheduledatefrom|date("m/d/Y") })}}
+                                        </div>
+                                        <div class='col-6'>
+                                            {{ form_label(form.schedule_date_to)}}
+                                            {{ form_widget(form.schedule_date_to)}}
+                                        </div>
+                                    </div>
+                                    <div class='form-group row'>
+                                         <div class='col-6'>
+                                            {{ form_label(form.schedule_time_from)}}
+                                            {{ form_widget(form.schedule_time_from)}}
+                                        </div>
+                                        <div class='col-6'>
+                                            {{ form_label(form.schedule_time_to)}}
+                                            {{ form_widget(form.schedule_time_to)}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-right">
+                                       <button type="submit" class="btn just-continue btn-primary" name="action" value="{{ action }}"
+                                    data-message="Are you sure you want to save this information?">Submit</button>
+                                    {% if action == 'u' and (userData.type == 'Super Admin' or 'Vet Schedule Delete' in userData.accesses) %}
+                                    <button type="submit" class="ask-continue btn  btn-danger" name="action" value="d"
+                                            data-message="Are you sure you want to delete this record?">Delete</button>
+                                    {% endif %}
+                             
+                                <a href="{{ path('vet_schedule_index') }}" class="button secondary btn btn-secondary">Back</a>
+                            </div>
+
+                            {{ form_widget(form.branch) }}
+                            {{ form_widget(form.action) }}
+                            {{ form_widget(form.id) }}
+                            {{ form_widget(form._token) }}                                
+                            
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    {% include 'js.html.twig' %}
+
+   
+    <script language="javascript">
+        //<![CDATA[
+        $(document).ready(function(){
+
+            vet_schedule_form.settings.vetAutocompleteUrl = "{{ path('user_vet_autocomplete') }}";
+            vet_schedule_form.init();
+
+            $('.timepicker-from').timepicker({
+                timeFormat: 'h:mm p',
+                interval: 30,
+                minTime: '12:00am',
+                maxTime: '12:00pm',
+                defaultTime: '',
+                startTime: '',
+                dynamic: false,
+                dropdown: true,
+                scrollbar: true,
+                change: function(time){
+                     $('.timepicker-to').timepicker('destroy');
+                     $('.timepicker-to').timepicker({
+                        timeFormat: 'h:mm p',
+                        interval: 30,
+                        minTime:  $('.timepicker-from').val(),
+                        defaultTime:  '',
+                        startTime:  $('.timepicker-from').val(),
+                        dynamic: false,
+                        dropdown: true,
+                        scrollbar: true
+                    });
+                }
+            });
+        });
+        //]]>
+    </script>
+
+{% endblock %}

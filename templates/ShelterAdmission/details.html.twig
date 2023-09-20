@@ -1,0 +1,259 @@
+{% extends 'content.html.twig' %}
+
+{% block pageContent %}
+    
+    <div class="content-wrapper" style="min-height: 847px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">{{ page_title }}</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item "><a href="{{ path('shelter_admission_index')}}">Admission</a></li>
+                            <li class="breadcrumb-item active">{{ page_title }}</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="card card-primary" >
+                            <div class="card-header">
+                                <div class='float-left'>Information</div>
+                                <div class='action-btn'><div class='float-right'><small> <a href='javascript:void(0);' class='href-modal fullscreen' data-id='{{ shelterAdmission.idencoded}}' data-url='{{ path("shelter_admission_ajax_form") }}' data-action="u">Update</a></small></div></div>
+                            </div>
+                            
+                            <div class="card-body details-part linear-placeholder" data-id='admInfo'> </div>
+                        </div>
+                        <div class="card card-primary" >
+                           <div class="card-header">
+                                <div class='float-left'>Pet Information</div>
+                                {# {% if shelterAdmission.status != 'Adopted' %} #}
+                                    <div class='action-btn'><div class='float-right'><small><a href='javascript:void(0);' class='href-modal' data-id='{{ shelterAdmission.idencoded}}' data-url='{{ path("shelter_admission_fostered_ajax_form") }}' data-action="u">Fostered</a> | <a href='javascript:void(0);' class='href-modal' data-id='{{ shelterAdmission.idencoded}}' data-url='{{ path("shelter_admission_adopt_ajax_form") }}' data-action="u">Adopt</a> | <a href='javascript:void(0);' class='href-modal' data-id='{{ shelterAdmission.pet.idencoded}}' data-url='{{ path("branch_pet_ajax_form") }}' data-action="u">Update</a></small></div></div>
+                                {# {% endif %} #}
+
+                            </div>
+                            <div class="card-body details-part linear-placeholder" data-id='petInfo'></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-9">
+                        <div class="card">
+                            <div class="card-header p-2">
+                                <ul class="nav nav-pills">
+                                    <li class="nav-item"><a class="nav-link active" href="#admissionHistory" data-toggle="tab">Admission History</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#medicalRecord" data-toggle="tab">Medical Records</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#behaviorRecord" data-toggle="tab">Behavior Records</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#files" data-toggle="tab">Files</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#photos" data-toggle="tab">Photos</a></li>
+                                </ul>
+                            </div>
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="admissionHistory">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                {% include 'flash_message.html.twig' %}
+                                                {% if userData.type == 'Super Admin' or 'Shelter Admission Details Admission History' in userData.accesses %}
+                                                    <div  class="dataTables_wrapper dt-bootstrap4">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                {# <div class='text-right'>
+                                                                    <a href='javascript:void(0);' class='href-modal' data-id='0' data-action='n'>New Meter</a>
+                                                                </div> #}
+                                                                <table id="admission-datalist" class="table dataTable" style='width:100%'>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>#</th>
+                                                                            <th>Admission Date</th>
+                                                                            <th>Facility</th>
+                                                                            <th>Status</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody></tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div> 
+                                                    </div>
+                                                {% else %}
+                                                    You don't have an access to view this data.
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="medicalRecord">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                {% include 'flash_message.html.twig' %}
+                                                {% if userData.type == 'Super Admin' or 'Shelter Admission Details Medical Record' in userData.accesses %}
+                                                    <div  class="dataTables_wrapper dt-bootstrap4">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                  {% if userData.type == 'Super Admin' or 'Shelter Admission Details Medical Record New' in userData.accesses %}
+                                                                    <div class='text-right'>
+                                                                        <a href='javascript:void(0);' class='href-modal' data-id='0' data-admissionid="{{ shelterAdmission.idencoded }}" data-url='{{ path("shelter_medical_record_ajax_select_admission_type_form") }}' data-action="n">New Medical Record</a>
+                                                                    </div>
+                                                                {% endif %}
+                                                                <table id="medicalRecord-datalist" class="table dataTable" style='width:100%'>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Date</th>
+                                                                            <th>Medical Record Type</th>
+                                                                            <th>Remarks</th>
+                                                                            <th>Action</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody></tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div> 
+                                                    </div>
+                                                {% else %}
+                                                    You don't have an access to view this data.
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                <div class="tab-pane" id="behaviorRecord">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                {% include 'flash_message.html.twig' %}
+                                                {% if userData.type == 'Super Admin' or 'Shelter Admission Details Behavior Record' in userData.accesses %}
+                                                    <div  class="dataTables_wrapper dt-bootstrap4">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                {% if userData.type == 'Super Admin' or 'Shelter Admission Details Behavior Record New' in userData.accesses %}
+                                                                    <div class='text-right'>
+                                                                        <a href='javascript:void(0);' class='href-modal' data-id='0' data-petid="{{ shelterAdmission.pet.idencoded }}" data-url='{{ path("behavior_record_ajax_form") }}' data-action="n">New Behavior Record</a>
+                                                                    </div>
+                                                                {% endif %}
+                                                                <table id="behaviorRecord-datalist" class="table dataTable" style='width:100%'>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Date</th>
+                                                                            <th>Handler</th>
+                                                                            <th>Area</th>
+                                                                            <th>Remarks</th>
+                                                                            <th>Action</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody></tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div> 
+                                                    </div>
+                                                {% else %}
+                                                    You don't have an access to view this data.
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="files">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                {% include 'flash_message.html.twig' %}
+                                                {% if userData.type == 'Super Admin' or 'Shelter Admission Details Files' in userData.accesses %}
+                                                    <div  class="dataTables_wrapper dt-bootstrap4">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                {% if userData.type == 'Super Admin' or 'Shelter Admission Details Pet Files New' in userData.accesses %}
+                                                                    <div class='text-right'>
+                                                                        <a href='javascript:void(0);' class='href-modal' data-id='0' data-petid="{{ shelterAdmission.pet.idencoded }}" data-url='{{ path("pet_file_ajax_form") }}' data-action="n">New File</a>
+                                                                    </div>
+                                                                {% endif %}
+                                                                <table id="petFile-datalist" class="table dataTable" style='width:100%'>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Date</th>
+                                                                            <th>Description</th>
+                                                                            <th>Action</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody></tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div> 
+                                                    </div>
+                                                {% else %}
+                                                    You don't have an access to view this data.
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="photos">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                {% include 'flash_message.html.twig' %}
+                                                {% if userData.type == 'Super Admin' or 'Shelter Admission Details Photo' in userData.accesses %}
+                                                    <div  class="dataTables_wrapper dt-bootstrap4">
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                {% if userData.type == 'Super Admin' or 'Shelter Admission Details Pet Photo New' in userData.accesses %}
+                                                                    <div class='text-right'>
+                                                                        <a href='javascript:void(0);' class='href-modal' data-id='0' data-petid="{{ shelterAdmission.pet.idencoded }}" data-url='{{ path("pet_photo_ajax_form") }}' data-action="n">New Photo</a>
+                                                                    </div>
+                                                                {% endif %}
+                                                                <table id="petPhoto-datalist" class="table dataTable" style='width:100%'>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Date</th>
+                                                                            <th>Before</th>
+                                                                            <th>After</th>
+                                                                            <th>Remarks</th>
+                                                                            <th>Action</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody></tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div> 
+                                                    </div>
+                                                {% else %}
+                                                    You don't have an access to view this data.
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    {% include 'js.html.twig' %}
+
+    <script language="javascript">
+        //<![CDATA[
+        $(document).ready(function(){
+            shelter_admission_details.settings.shelterAdmissionId =  '{{ shelterAdmission.idencoded }}';
+            shelter_admission_details.settings.petId =  '{{ shelterAdmission.pet.idencoded }}';
+            shelter_admission_details.settings.status = '{{ shelterAdmission.status }}';
+            shelter_admission_details.settings.shelterAdmissionHistoryAjax =  '{{ path("shelter_admission_ajax_history_list") }}';
+            shelter_admission_details.settings.shelterAdmissionDetailPartAjax =  '{{ path("shelter_admission_ajax_details_part") }}';
+            shelter_admission_details.settings.behaviorRecordAjaxListUrl =  '{{ path("behavior_record_ajax_list") }}';
+            shelter_admission_details.settings.petFileAjaxListUrl =  '{{ path("pet_file_ajax_list") }}';
+            shelter_admission_details.settings.petPhotoAjaxListUrl =  '{{ path("pet_photo_ajax_list") }}';
+            shelter_admission_details.settings.medicalRecordAjaxListUrl =  '{{ path("medical_record_shelter_ajax_list") }}';
+            shelter_admission_details.init();
+        });
+        //]]>
+    </script>
+{% endblock %}

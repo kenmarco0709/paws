@@ -1,0 +1,364 @@
+<aside class="main-sidebar {{ userData['currentModule'] == 'Clinic' ? 'on-clinic-session' : 'on-shelter-session' }} elevation-4">
+    <div >
+        <div class='text-center brand-link'>
+            <a href="{{ path('dashboard_index')}}" style='color:#fff;' >
+                <span class="brand-text font-weight-bold">{{ userData['currentModule'] == 'Clinic' ? 'CLINIC' : 'SHELTER' }}</span>
+            </a>
+            <a href='{{ path("switch_index")}}' class='switch-link' data-toggle="tooltip" data-placement="top" title="Switch to {{ userData['currentModule'] == 'Clinic' ? 'Shelter' : 'Clinic' }}">
+  
+                  <i class='fas fa-sync'></i>
+            </a>          
+        </div>
+
+    </div>
+   
+
+    <div class="sidebar">
+        
+    
+    {# Display none because of an issue in jquery when you removed it. #}
+
+
+    <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+            {% if  userData['currentModule'] == 'Clinic' %}
+                {% if userData and userData.type == 'Super Admin'  or 'Schedule' in userData.accesses %}
+                    <li class="nav-item">
+                        <a href="{{ path('schedule_index')}}" class="nav-link">
+                            <p>
+                                Clinic Schedule
+                            </p>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if userData and userData.type == 'Super Admin'  or 'Vet Schedule' in userData.accesses %}
+                    <li class="nav-item">
+                        <a href="{{ path('vet_schedule_index')}}" class="nav-link">
+                            <p>
+                                Veterinarian Schedule
+                            </p>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if userData and userData.type == 'Super Admin'  or 'Admission' in userData.accesses %}
+                    <li class="nav-item">
+                        <a href="{{ path('admission_index')}}" class="nav-link">
+                            <p>
+                                Clinic Client
+                            </p>
+                        </a>
+                    </li>
+                {% endif %}
+                {# {% if userData and userData.type == 'Super Admin'  or 'Admission Confinement' in userData.accesses %}
+                    <li class="nav-item">
+                        <a href="{{ path('admission_confinement')}}" class="nav-link">
+                            <p>
+                                Confinement
+                            </p>
+                        </a>
+                    </li>
+                {% endif %} #}
+                {% if userData and userData.type == 'Super Admin'  or 'Client' in userData.accesses %}
+
+                    <li class="nav-item">
+                        <a href="{{ path('client_index') }}" class="nav-link">
+                            <p>  Client </p>
+                        </a>
+                    </li>
+
+                {% endif %}
+                {% if userData and userData.type == 'Super Admin'  or 'Pet' in userData.accesses %}
+
+                    <li class="nav-item">
+                        <a href="{{ path('pet_index') }}" class="nav-link">
+                            <p>  Pet </p>
+                        </a>
+                    </li>
+
+                {% endif %}
+                {% if userData and userData.type == 'Super Admin'  or 'Inventory Item' in userData.accesses %}
+
+                    <li class="nav-item">
+                        <a href="{{ path('inventory_item_index') }}" class="nav-link">
+                            <p>  Inventory </p>
+                        </a>
+                    </li>
+
+                {% endif %}
+                {% if userData and userData.type == 'Super Admin'  or 'Messenger' in userData.accesses %}
+
+                    <li class="nav-item">
+                        <a href="{{ path('messenger_list') }}" class="nav-link">
+                            <p>  Messenger </p>
+                        </a>
+                    </li>
+
+                {% endif %}
+                {# {% if userData and userData.type == 'Super Admin'  or 'Billing' in userData.accesses %}
+
+                    <li class="nav-item">
+                        <a href="{{ path('billing_index') }}" class="nav-link">
+                            <p>  Billing </p>
+                        </a>
+                    </li>
+
+                {% endif %} #}
+                {% if userData and userData.type == 'Super Admin'  or 'Invoice' in userData.accesses %}
+                    <li class="nav-item">
+                        <a href="{{ path('invoice_index')}}" class="nav-link">
+                            <p>
+                                Invoice
+                            </p>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if userData and userData.type == 'Super Admin'  or 'Payment' in userData.accesses %}
+                    <li class="nav-item">
+                        <a href="{{ path('payment_index')}}" class="nav-link">
+                            <p>
+                                Payments
+                            </p>
+                        </a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a href="{{ path('data_analytic_index') }}" class="nav-link">
+                        <p>  Data Analytics </p>
+                    </a>
+                </li>
+                {% if userData and userData.type == 'Super Admin'  or 'Report' in userData.accesses %}
+                    <li class="nav-item">
+                        <a href="javascript:void" class="nav-link">
+                            <i class="fas fa-gear"></i>
+                            <p>
+                                Reports
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        
+                        
+                        <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ path('report_medical_record') }}" class="nav-link">
+                                        <p>Medical Record</p>
+                                    </a>
+                                </li> 
+                            {% if userData and userData.type == 'Super Admin'  or 'Report Sales Income' in userData.accesses %}
+                                <li class="nav-item">
+                                    <a href="{{ path('report_sales_income') }}" class="nav-link">
+                                        <p>Sales Income</p>
+                                    </a>
+                                </li> 
+                            {% endif  %}
+                            {% if userData and userData.type == 'Super Admin'  or 'Payment' in userData.accesses %}
+                                <li class="nav-item">
+                                    <a href="{{ path('payment_report') }}" class="nav-link">
+                                        <p>Payments</p>
+                                    </a>
+                                </li> 
+                            {% endif  %}
+                            {# {% if userData and userData.type == 'Super Admin'  or 'Invoice' in userData.accesses %}
+                                <li class="nav-item">
+                                    <a href="{{ path('invoice_report') }}" class="nav-link">
+                                        <p>Invoices</p>
+                                    </a>
+                                </li> 
+                            {% endif  %} #}
+                            {% if userData and userData.type == 'Super Admin'  or 'Invoice' in userData.accesses %}
+                                <li class="nav-item">
+                                    <a href="{{ path('invoice_aging_report') }}" class="nav-link">
+                                        <p>Aging Invoices</p>
+                                    </a>
+                                </li> 
+                            {% endif  %}
+                             {% if userData and userData.type == 'Super Admin'  or 'Report Schedule' in userData.accesses %}
+                                <li class="nav-item">
+                                    <a href="{{ path('report_schedule') }}" class="nav-link">
+                                        <p>Schedule</p>
+                                    </a>
+                                </li> 
+                            {% endif  %}
+
+                        </ul>
+                    </li>
+                {% endif %}
+            {% else %}
+                {% if userData and userData.type == 'Super Admin'  or 'Shelter Admission' in userData.accesses %}
+                    <li class="nav-item">
+                        <a href="{{ path('shelter_admission_index')}}" class="nav-link">
+                            <p>
+                                Admission
+                            </p>
+                        </a>
+                    </li>
+                {% endif %}    
+                {% if userData and userData.type == 'Super Admin'  or 'Report' in userData.accesses %}
+                    <li class="nav-item">
+                        <a href="javascript:void" class="nav-link">
+                            <i class="fas fa-gear"></i>
+                            <p>
+                                Reports
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        
+                        
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ path('shelter_admission_adoption_report') }}" class="nav-link">
+                                    <p>Adoption</p>
+                                </a>
+                            </li> 
+                        </ul>
+                    </li>
+                {% endif %}
+            {% endif %}
+      
+             {% if 'CMS' in userData.accesses %}
+                    <li class="nav-item">
+                        <a href="javascript:void" class="nav-link">
+                            <i class="fas fa-gear"></i>
+                            <p>
+                                CMS
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        
+                        <ul class="nav nav-treeview">
+                            {% if 'CMS Facility' in userData.accesses %}
+                                <li class="nav-item">   
+                                    <a href="{{ path('facility_index') }}" class="nav-link">
+                                        <p>Facility</p>
+                                    </a>
+                                </li> 
+                            {% endif %}
+                            {% if 'CMS Stage' in userData.accesses %}
+                                <li class="nav-item">   
+                                    <a href="{{ path('stage_index') }}" class="nav-link">
+                                        <p>Status</p>
+                                    </a>
+                                </li> 
+                            {% endif %}
+                            {% if 'CMS Service' in userData.accesses %}
+                                <li class="nav-item">   
+                                    <a href="{{ path('service_index') }}" class="nav-link">
+                                        <p>Service</p>
+                                    </a>
+                                </li> 
+                            {% endif %}
+                            {% if 'CMS Payment Type' in userData.accesses %}
+                                <li class="nav-item">   
+                                    <a href="{{ path('payment_type_index') }}" class="nav-link">
+                                        <p>Payment Type</p>
+                                    </a>
+                                </li> 
+                            {% endif %}
+                            {% if 'CMS Item' in userData.accesses %}
+                                <li class="nav-item">   
+                                    <a href="{{ path('item_index') }}" class="nav-link">
+                                        <p>Item</p>
+                                    </a>
+                                </li> 
+                            {% endif %}
+                            {% if 'CMS Supplier' in userData.accesses %}
+                                <li class="nav-item">   
+                                    <a href="{{ path('supplier_index') }}" class="nav-link">
+                                        <p>Supplier</p>
+                                    </a>
+                                </li> 
+                            {% endif %}
+                            {% if 'CMS Species' in userData.accesses %}
+                                <li class="nav-item">   
+                                    <a href="{{ path('species_index') }}" class="nav-link">
+                                        <p>Species</p>
+                                    </a>
+                                </li> 
+                            {% endif %}
+                            {% if 'CMS Item Category' in userData.accesses %}
+                                <li class="nav-item">   
+                                    <a href="{{ path('item_category_index') }}" class="nav-link">
+                                        <p>Item Category</p>
+                                    </a>
+                                </li> 
+                            {% endif %}
+                        </ul>
+                    </li>
+                {% endif %}
+                {% if 'Audit Trail' in userData.accesses %}
+                    <li class="nav-item">   
+                        <a href="{{ path('audit_trail_index') }}" class="nav-link">
+                            <p>Audit Trail</p>
+                        </a>
+                    </li> 
+                {% endif %}
+            {% if userData.type == 'Super Admin'%}
+                <li class="nav-item">
+                    <a href="javascript:void" class="nav-link">
+                        <i class="fas fa-gear"></i>
+                        <p>
+                            System
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ path('company_index') }}" class="nav-link">
+                                <p>Company</p>
+                            </a>
+                        </li> 
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="javascript:void" class="nav-link">
+                        <i class="fas fa-gear"></i>
+                        <p>
+                            CMS
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">   
+                            <a href="{{ path('breed_index') }}" class="nav-link">
+                                <p>Breed</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">   
+                            <a href="{{ path('admission_type_index') }}" class="nav-link">
+                                <p>Admission Type</p>
+                            </a>
+                        </li> 
+                        <li class="nav-item">   
+                            <a href="{{ path('service_type_index') }}" class="nav-link">
+                                <p>Service Type</p>
+                            </a>
+                        </li> 
+                    </ul>
+                </li>
+            {% endif %}
+            
+        </ul>
+    </nav>
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex"></div>
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="info info-c">
+            <div class='user-info  text-center'>
+                <div>{{ userData.fullName|upper }}</div>
+                <div>{{ userData.type|upper }}</div>
+            </div>
+                <ul class="nav nav-pills nav-sidebar flex-column" >
+              
+                    <li class="nav-item">
+                        <a href="{{ path('auth_logout') }}" class="nav-link">
+                            <p>  Logout </p>
+                        </a>
+                    </li>
+                </ul>
+        </div>
+    </div>
+
+</aside>

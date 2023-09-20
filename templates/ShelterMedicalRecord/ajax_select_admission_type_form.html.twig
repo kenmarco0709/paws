@@ -1,0 +1,74 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{ page_title }}</h5>
+</div>
+<div class="modal-body">
+    <div class="card card-primary">
+         <div class="alert alert-danger errors d-none" role="alert" >
+       
+        </div>
+        <div class="alert alert-success success d-none" role="alert" >
+       
+        </div>
+        <div class="card-body">
+            <form id="form">
+                <div class="form-group">
+                    <select class="form-control form-control-lg" name="admission_type" id="admissionType">
+                        {% for admissionType in admissionTypes %}
+                            <option value="{{ admissionType.idencoded}}">{{ admissionType.description}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+              
+                <div class="card-footer text-right">
+                    <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary"  name="action" >Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+    
+
+
+<script language="javascript">
+    //<![CDATA[
+    $(document).ready(function(){
+      
+            var id = "{{ id }}";
+            var admissionId = "{{ admissionId }}";
+            var action = "{{ action }}";
+
+            var clientPetFormActionUrl = "{{ path('shelter_medical_record_ajax_form')}}";
+            $('.close-modal').unbind('click').bind('click',function(){
+                $('.modal').modal('hide');
+            });
+
+            $('#form').submit(function(e){
+                e.preventDefault();
+                _this = $(this);
+                _this.find(':input[type=submit]').prop('disabled', true);
+                    $.ajax({
+                        url: clientPetFormActionUrl,
+                        type: 'POST',
+                        data: { id: id, action: action, admissionId: admissionId, admissionType: $('#admissionType').val() },
+
+                        beforeSend: function(){
+                            $('#modal').addClass('modal-fullscreen');
+                            $(".modal-content").html('');
+                            
+                        },
+                        success: function(r){
+                            if(r.success){
+
+                                
+                                $(".modal-content").html(r.html);
+                                $('#modal').modal('show');
+                            }
+                        }
+                    });
+            });
+    });
+    //]]>
+</script>

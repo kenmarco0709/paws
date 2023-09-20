@@ -1,0 +1,205 @@
+{% extends 'content.html.twig' %}
+
+{% block pageContent %}
+    
+    <div class="content-wrapper" style="min-height: 847px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Manage {{ page_title }}</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-payment_type active">{{ page_title }}</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class='container-fluid'>
+                                    <div class='row'>
+                                        <div class='col-3'>
+                                            <div class='chat-list'>
+                                                <ul id="friend-list">
+                                                    
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class='col-9'>
+                                            <div class='chat-message'>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    {% include 'js.html.twig' %}
+
+    <script language="javascript">
+        //<![CDATA[
+
+                // get user access "https://graph.facebook.com/oauth/access_token?client_id=815174053131245&client_secret=25262b2dd4424678873a87e683dbb6d6&grant_type=client_credentials;
+                // get page access https://graph.facebook.com/815174053131245/accounts?access_token=815174053131245|kUYGGSYYxq86_Vj8z6nLPCqTv3U
+              
+              
+               var messageIds = [];
+               $.get("https://graph.facebook.com/5435679859800872/conversations?&fields=participants,messages{from,to,tags}&access_token=EAALlZAXZCd8ZB0BAHP0259B0AxZAc2LPeX35CJIM0rUHRearRqKLzM1QprLiWEm8eTixEy08rZB8rfK8F51ZCWo3vSqunmwntJZBofGkZAKNffsHDdmXlbBwngLEPEJcmDVn0IrIliKvRapZB3G6dZCsv4rVSlHZBk8f0vttZCk9xMszxUfhmSTDbwFo", function(data, status){
+                    
+                    if(data){
+
+                        var  friendList = '';
+                        var  isRead = true;
+                        $.each(data.data,function(i, v){
+                            $.each(v.messages['data'].reverse(), function(m,d){
+                                if(d.from != undefined  && d.from.id != '271453686214231'){
+                                    $.each(d.tags['data'],function(e,f){
+                                        if(f.name == 'inbox'){
+                                            isRead = false;
+                                        }
+                                        if(f.name == 'read'){
+                                            isRead = true;
+                                        } 
+                                    });
+                                }
+                            }); 
+                            if(v.participants.data[0].id != '271453686214231'){
+                                 friendList +=  '<li class="'+(isRead ? "seen" : "unseen" )+ '"><a id="conversation_'+v.id+'" href="javascript:void(0)" data-clientid="'+v.participants.data[0].id+'" data-cid='+v.id+' class="conversation" data-client="'+v.participants.data[0].name+'">' +v.participants.data[0].name + '</a></li>';
+                            }
+                        });
+
+                        $('#friend-list').html(friendList);
+                        init_conversation();
+                    }
+                   
+                });
+
+                function init_conversation(){
+
+                    if($('.conversaton')){
+                        
+                        $.each($('.conversation'),function(i, v){
+                           var _this = $(this);
+                           if(i == 0){
+                                get_conversation_messages(_this)
+
+                           }
+                           _this.unbind('click').bind('click',function(){
+                                get_conversation_messages(_this);
+                                _this.parent().removeClass('unseen').addClass('seen');
+                           });
+                        });
+                    }
+                }
+
+                function get_conversation_messages(_this){
+                  
+                    $.get("https://graph.facebook.com/"+_this.data('cid')+"?fields=messages{from,to,tags,message}&access_token=EAALlZAXZCd8ZB0BAHP0259B0AxZAc2LPeX35CJIM0rUHRearRqKLzM1QprLiWEm8eTixEy08rZB8rfK8F51ZCWo3vSqunmwntJZBofGkZAKNffsHDdmXlbBwngLEPEJcmDVn0IrIliKvRapZB3G6dZCsv4rVSlHZBk8f0vttZCk9xMszxUfhmSTDbwFo", function(data, status){
+                        $('.chat-message').html(render_chat_message(data.messages, _this));
+                        $('.card-body').animate({ scrollTop: $(document).height() }, "slow");
+
+                        send_message();
+                    });
+                }   
+
+                function render_chat_message(msg,_this){
+                    
+                    var html = '<div class="card card-primary card-outline" data-id="'+_this.prop('id')+'" id="chat-message-container">';
+                        html +='<div class="card-header">';
+                        html += '<h3 class="card-title">'+_this.data('client')+'</h3>';
+                        html +='</div>';
+                        html +='<div class="card-body c-cardbody" style="overflow-y:scroll;">';
+
+                        $.each(msg.data.reverse(), function(i, v){
+
+                            messageIds.push(v.id);
+                           if(v.from.id != '271453686214231'){
+                                   html +='<div class="customer-message mb-2">';
+                                   html +='<div style="background-color:#f4f6f9;float:left;padding:5px;border-radius:8px;max-width:45%">'+v.message+'</div>';
+                                   html +='<div style="clear:both"></div>';
+                                   html +='</div>';
+                           } else {
+                                html +='<div class="my-message text-right mb-2">';
+                                html +='<div style="background-color:#007bff;float:right;padding:5px;border-radius:8px;color:#fff;max-width:45%">'+v.message+'</div>';
+                                html +='<div style="clear:both"></div>';
+                                html +='</div>';
+                           }
+                        });
+
+                        html +='</div>';
+                        html +='<div class="card-footer"><form id="chatForm" data-clientid="'+_this.data('clientid')+'">';
+                        html +='<div class="row">';
+                        html +='<textarea class="form-control col-9" name="chat"></textarea>';
+                        html +='<div class="col-1"></div>';
+                        html +='<button type="submit" class="btn btn-primary col-2" id="formBtn"><i class="far fa-envelope"></i> Send</button>';
+                        html +='</div></form>';
+                        html +='</div>';
+                        html += '</div>';
+                    return html;
+                }
+
+                function render_incoming_chat(_this){
+                    $.get("https://graph.facebook.com/"+_this.data('cid')+"?fields=messages{from,to,tags,message}&access_token=EAALlZAXZCd8ZB0BAHP0259B0AxZAc2LPeX35CJIM0rUHRearRqKLzM1QprLiWEm8eTixEy08rZB8rfK8F51ZCWo3vSqunmwntJZBofGkZAKNffsHDdmXlbBwngLEPEJcmDVn0IrIliKvRapZB3G6dZCsv4rVSlHZBk8f0vttZCk9xMszxUfhmSTDbwFo", function(data, status){
+                        var html = '';
+                        $.each(data.messages.data, function(i, v){
+                            if(jQuery.inArray(v.id, messageIds) === -1) {
+                                
+                                messageIds.push(v.id);
+                                if(v.from.id != '271453686214231'){
+                                    html +='<div class="customer-message mb-2">';
+                                    html +='<div style="background-color:#f4f6f9;float:left;padding:5px;border-radius:8px;max-width:45%">'+v.message+'</div>';
+                                    html +='<div style="clear:both"></div>';
+                                    html +='</div>';
+
+                                } else {
+                                    
+                                    html +='<div class="my-message text-right mb-2">';
+                                    html +='<div style="background-color:#007bff;float:right;padding:5px;border-radius:8px;color:#fff;max-width:45%">'+v.message+'</div>';
+                                    html +='<div style="clear:both"></div>';
+                                    html +='</div>';
+                                }
+
+                                $('.c-cardbody').append(html);
+                                $('.c-cardbody').animate({ scrollTop: $(document).height() }, "slow");
+                            }
+                        });
+                    });
+                }
+
+                function send_message(){
+
+                    $( "#chatForm" ).submit(function( event ) {
+                        event.preventDefault();
+
+                        var input = $("#chatForm :input[name=chat]"); 
+
+                        if(input != ''){
+                            $.post("https://graph.facebook.com/271453686214231/messages?access_token=EAALlZAXZCd8ZB0BAHP0259B0AxZAc2LPeX35CJIM0rUHRearRqKLzM1QprLiWEm8eTixEy08rZB8rfK8F51ZCWo3vSqunmwntJZBofGkZAKNffsHDdmXlbBwngLEPEJcmDVn0IrIliKvRapZB3G6dZCsv4rVSlHZBk8f0vttZCk9xMszxUfhmSTDbwFo&messaging_type=RESPONSE&recipient={id:"+ $(this).data('clientid')+"}&message={text:'"+input.val()+"'}" , function(data, status){
+                                render_incoming_chat($('#' + $('#chat-message-container').data('id')));
+                                input.val('');
+                            });
+                        }
+                    });
+                  
+                }
+
+                setInterval(() => {
+                    render_incoming_chat($('#' + $('#chat-message-container').data('id')));
+                }, 5000);
+
+        //]]>
+    </script>
+{% endblock %}

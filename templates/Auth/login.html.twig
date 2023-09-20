@@ -1,0 +1,41 @@
+{% extends "base.html.twig" %}
+
+{% block content %}
+
+    <div class="login-box">
+        <div class="login-logo">
+            <a href="{{ path('auth_login')}}"><b></b></a>
+        </div>
+
+        <div class="card">
+            <div class="card-body login-card-body">
+                <div class="login-logo p-3">
+                    <a href="{{ path('auth_login')}}">
+                        <img src='{{ asset('/dist/img/logo.png')}}' />
+                    </a>
+                </div>
+                {% include 'flash_message.html.twig' %}
+                <form action="{{ path('auth_login') }}" method="post">
+                    <div class=" mb-3">
+                        {{ form_label(form.username)}}
+                        {{ form_widget(form.username)}}
+                    </div>
+                    <div class=" mb-3">
+                        {{ form_label(form.password)}}
+                        {{ form_widget(form.password)}}
+                    </div>
+
+                    {{ form_widget(form._token) }}
+                    <div class="row mt-5">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-block">LOGIN</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>  
+    </div>
+
+    {% include "js.html.twig" %}
+
+{% endblock %}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Calibri:400,700,400italic,700italic">
+	
+	<style>
+
+        table thead tr td{
+			font-family: 'Calibri'!important;
+			font-size: 18px;
+			border: 2px solid #000;
+			padding:5px;
+			margin:0px!important;
+			border-spacing: -10px!important;
+            font-weight: 600;
+			
+		}
+     
+
+        table  tr td{
+			font-family: 'Calibri'!important;
+			font-size: 18px;
+			margin:0px!important;
+			border-spacing: -10px!important;
+			
+		}
+
+        .text-center{
+            text-align:center;
+        }
+
+        .text-right{
+            text-align:right;
+        }
+
+        .bold{
+            font-weight: 600;
+        }
+
+		table { border-collapse: collapse; }
+       
+        tr.border-top td {
+            border-top:1pt solid black;
+        }
+
+        .amount-container {
+            width: 160px;
+        }
+	</style>
+</head>
+<body style="font-family:Calibri;">
+
+    <div><h2>Adoption Report </h2></div>
+    <div> Start Date: {{ startDate  }}</div>
+    <div> End Date: {{ endDate }}</div>
+    <div>
+        <table  width="100%">
+            <thead>
+                <tr>
+                    <td class='text-center bold'>Pet</td>
+                    <td class='text-center bold'>Adopter Name</td>
+                    <td class='text-center bold'>Adopter Contact #</td>
+                    <td class='text-center bold'>Adopter Address</td>
+                    <td class='text-center bold'>Adopter Email Address</td>
+                    <td class='text-center bold'>Adoption Date</td>
+                    <td class='text-center bold'>Remarks</td>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    <tr>
+                        <td class='text-center'>{{ result['pet'] }}</td>
+                        <td class='text-center'>{{ result['adopter'] }}</td>
+                        <td class='text-center'>{{ result['adopterContact'] }}</td>
+                        <td class='text-center'>{{ result['adopterAddress'] }}</td>
+                        <td class='text-center'>{{ result['adopterEmail'] }}</td>
+                        <td class='text-center'>{{ result['adoptionDate'] }}</td>
+                        <td class='text-center'>{{ result['remarks'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

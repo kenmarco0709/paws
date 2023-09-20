@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Calibri:400,700,400italic,700italic">
+	
+	<style>
+
+        table thead tr td{
+			font-family: 'Calibri'!important;
+			font-size: 18px;
+			border: 2px solid #000;
+			padding:5px;
+			margin:0px!important;
+			border-spacing: -10px!important;
+            font-weight: 600;
+			
+		}
+     
+
+        table  tr td{
+			font-family: 'Calibri'!important;
+			font-size: 18px;
+			margin:0px!important;
+			border-spacing: -10px!important;
+			
+		}
+
+        .text-center{
+            text-align:center;
+        }
+
+        .text-right{
+            text-align:right;
+        }
+
+        .bold{
+            font-weight: 600;
+        }
+
+		table { border-collapse: collapse; }
+       
+        tr.border-top td {
+            border-top:1pt solid black;
+        }
+
+        .amount-container {
+            width: 160px;
+        }
+	</style>
+</head>
+<body style="font-family:Calibri;">
+
+    <div><h2>Sales Income Report </h2></div>
+    <div> Start Date: {{ startDate  }}</div>
+    <div> End Date: {{ endDate }}</div>
+    <div>
+        <table  width="100%">
+            <thead>
+                <tr>
+                    <td colspan="2">&nbsp;</td>
+                    <td class='text-center bold'>Description</td>
+                    <td class='text-center bold'>Quantity</td>
+                    <td class='text-center bold'>Buying Price</td>
+                    <td class='text-center bold'>Selling Price</td>
+                    <td class='text-center bold'>Discount</td>
+                    <td class='text-center bold'>Gross</td>
+                    <td class='text-center bold'>Net</td>
+                    <td class='text-center bold'>Payment Amt</td>
+                    <td class='text-center bold'>Receivable Amt</td>
+
+                </tr>
+            </thead>
+            <tbody>
+
+                {% set discount = 0 %}
+                {% set gross = 0 %}
+                {% set net = 0 %}
+                {% set payment_amt = 0 %}
+                {% set due_amt = 0 %}
+                
+                {% for result in results %}
+
+                    {% set payment_amt = payment_amt + result['payment_amt'] %}
+                    {% set due_amt = due_amt + result['due_amt'] %}
+                    
+                    <tr>
+                        <td class='text-left ' style="width:200px;">
+                            <div class='bold'>Invoice #: {{ result['invoice_id']}}</div>
+                            <div class='bold'>Client:{{result['client']}}</div>
+                        </td>
+                        <td colspan></td>
+                    </tr>
+                    
+                    {% for product in result.products %}
+                        {% set discount = discount + product['discount'] %}
+                        {% set gross = gross + product['gross'] %}
+                        {% set net = net + product['net']  %}
+                    
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                            <td class='text-center'>{{ product['description'] }}</td>
+                            <td class='text-right'>{{ product['quantity']|number_format(2,'.',',')}}</td>
+                            <td class='text-right'>{{ product['buying_price']|number_format(2,'.',',')}}</td>
+                            <td class='text-right'>{{ product['selling_price']|number_format(2,'.',',') }}</td>
+                            <td class='text-right'>{{ product['discount']|number_format(2,'.',',') }}</td>
+                            <td class='text-right'>{{ product['gross']|number_format(2,'.',',') }}</td>
+                            <td class='text-right'>{{ product['net']|number_format(2,'.',',') }}</td>
+                            <td colspan="2"></td>
+                        </tr>
+                    {% endfor %}
+
+                    <tr>
+                        <td colspan="9">&nbsp;</td>
+                        <td class='text-right'>{{ result['payment_amt']|number_format(2,'.',',')}}</td>
+                        <td class='text-right'>{{ result['due_amt']|number_format(2,'.',',') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfooter>
+              <tr class='border-top'>
+                    <td colspan="6" class='text-right bold'>Total: </td>
+                    <td class='text-right'>{{ discount|number_format(2,'.',',')}}</td>
+                    <td class='text-right'>{{ gross|number_format(2,'.',',') }}</td>
+                    <td class='text-right'>{{ net|number_format(2,'.',',') }}</td>
+                    <td class='text-right'>{{ payment_amt|number_format(2,'.',',')}}</td>
+                    <td class='text-right'>{{ due_amt|number_format(2,'.',',')}}</td>
+                </tr>
+            </tfooter>
+        </table>
+    </div>
+</body>
+</html>

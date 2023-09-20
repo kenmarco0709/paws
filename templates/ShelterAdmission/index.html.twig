@@ -1,0 +1,92 @@
+{% extends 'content.html.twig' %}
+
+{% block pageContent %}
+    
+    <div class="content-wrapper" style="min-height: 847px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Manage {{ page_title }}</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item active">{{ page_title }}</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+               <div class='row'>
+                    <div class="col-6">
+                        <div class='container'>
+                            <div class='row'>
+                                <div class="col-sm-4">
+                                    {% if userData.type == 'Super Admin' or 'Shelter Admission Import' in userData.accesses %}
+                                        <form method="POST" action="{{ path('shelter_admission_import')}}" enctype='multipart/form-data' id="uploadFileForm">
+                                            <label for="uploadFile" class="btn btn-primary">
+                                                Upload Animals
+                                            </label>
+                                            <input id="uploadFile" type="file" name='shelter_admissions' style="display:none;" accept=".csv" />
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                {% include 'flash_message.html.twig' %}
+                                <div class='bold'><strong>Admission List</strong></div>
+                                <div  class="dataTables_wrapper dt-bootstrap4">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            {% if userData.type == 'Super Admin' or 'Shelter Admission Select Admission Type' in userData.accesses %}
+                                                <div class="text-right"><a href="{{ path('shelter_admission_select_admission_type')}}">New Admission</a></div>
+                                            {% endif %}
+                                            <table id="shelter_admission-datalist" class="table dataTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Pet </th>
+                                                        <th>Gender </th>
+                                                        <th>Species </th>
+                                                        <th>Color/ Markings </th>
+                                                        {# <th>Adopter</th> #}
+                                                        <th>Rescuer</th>
+                                                        <th>Facility</th>
+                                                        <th>Admission Date</th>
+                                                        {# <th>Adaption Date</th> #}
+                                                        <th>Returned Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    {% include 'js.html.twig' %}
+
+    <script language="javascript">
+        //<![CDATA[
+        $(document).ready(function(){
+            shelter_admission.settings.ajaxUrl = '{{ path('shelter_admission_ajax_list') }}';
+            shelter_admission.init();
+        });
+        //]]>
+    </script>
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends 'content.html.twig' %}
+
+{% block pageContent %}
+    
+    <div class="content-wrapper" style="min-height: 847px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-12">
+                        <h1 class="m-0">{{ page_title }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class='container-fluid'>
+                <div class='row'>
+                    <div class='col-12'>
+                        <div class='invoice p-3 mb-3'>
+                            <div class="row invoice-info mb-3">
+                                 {% include 'flash_message.html.twig' %}
+                                <div class="col-sm-12 invoice-col">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <strong>Item : </strong> {{ inventoryItem.item.description}} </br>
+                                            <strong>Category : </strong> {{ inventoryItem.item.itemcategory is defined and  inventoryItem.item.itemcategory is not null  ? inventoryItem.item.itemcategory.description : ''}} </br>
+                                        </div>
+                                        <div class="col-4">
+                                            <strong>Quantity: </strong> {{ inventoryItem.quantity}} </br>
+                                            <strong>Beginning Quantity: </strong> {{ inventoryItem.beginningquantity}} </br>
+                                            <strong>Low Quantity: </strong> {{ inventoryItem.lowquantity}} </br>
+                                        </div>
+                                         <div class="col-4">
+                                            <strong>Selling Price: </strong> {{ inventoryItem.sellingprice|number_format(2, '.', ',')}} </br>
+                                            <strong>Buying Price  : </strong> {{ inventoryItem.buyingprice|number_format(2, '.', ',')}}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 table-responsive mt-5">
+                                            {% if 'Inventory Item Details Completed Order New' in userData.accesses %}
+                                                <div class='text-right'>
+                                                    <a href='{{ path("inventory_item_completed_order_form" , { inventory_item_id: inventoryItem.idencoded })}}'> New Completed Order</a>
+                                                </div>
+                                            {% endif %}
+                                            <table class="table table-striped" id="inventoryItemCompletedOrders">
+                                                <thead>
+                                                    <tr>
+                                                        <td>Date</td>
+                                                        <td>Supplier</td>
+                                                        <td>Quantity</td>
+                                                        <td>Selling Price</td>
+                                                        <td>Buying Price</td>
+                                                        <td>Remarks</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 table-responsive mt-5">
+                                            {% if 'Inventory Item Details Adjustment New' in userData.accesses %}
+                                                <div class='text-right'>
+                                                    <a href='{{ path("inventory_item_adjustment_form" , { inventory_item_id: inventoryItem.idencoded })}}'> New Item Adjustment</a>
+                                                </div>
+                                            {% endif %}
+                                            <table class="table table-striped" id="inventoryItemAdjustments">
+                                                <thead>
+                                                    <tr>
+                                                        <td>Date</td>
+                                                        <td>Type</td>
+                                                        <td>Low Quantity</td>
+                                                        <td>Quantity</td>
+                                                        <td>Selling Price</td>
+                                                        <td>Buying Price</td>
+                                                        <td>Remarks</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="row  mt-5">
+                                        <div class='text-right'>
+                                            <strong>Medical Record Items</strong>
+                                        </div>
+                                        <div class="col-12 table-responsive">
+                                            <table class="table table-striped" id="medicalRecordItem">
+                                                <thead>
+                                                    <tr>
+                                                        <td>Date</td>
+                                                        <td>Type</td>
+                                                        <td>Quantity</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="row  mt-5">
+                                        <div class='text-right'>
+                                            <strong>Invoice Items</strong>
+                                        </div>
+                                        <div class="col-12 table-responsive">
+                                            <table class="table table-striped" id="invoiceInventoryItem">
+                                                <thead>
+                                                    <tr>
+                                                        <td>Date</td>
+                                                        <td>Type</td>
+                                                        <td>Quantity</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                     <div class="row  mt-5">
+                                        <div class='text-right'>
+                                            <strong>Invoice Void Items</strong>
+                                        </div>
+                                        <div class="col-12 table-responsive">
+                                            <table class="table table-striped" id="invoiceVoidInventoryItem">
+                                                <thead>
+                                                    <tr>
+                                                        <td>Date</td>
+                                                        <td>Type</td>
+                                                        <td>Quantity</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    {% include 'js.html.twig' %}
+
+   
+    <script language="javascript">
+        //<![CDATA[
+        $(document).ready(function(){
+                details.settings.inventoryItemAdjustmentAjaxUrl = "{{ path('inventory_item_adjustement_ajax_list')}}";
+                details.settings.inventoryItemCompletedOrderAjaxUrl = "{{ path('inventory_item_completed_order_ajax_list')}}";
+                details.settings.inventoryItemMedicalRecordAjaxUrl = "{{ path('inventory_item_medical_record_item_ajax_list')}}";
+                details.settings.inventoryItemInvoiceAjaxUrl = "{{ path('inventory_item_invoice_inventory_item_ajax_list')}}";
+                details.settings.inventoryItemInvoiceVoidAjaxUrl = "{{ path('inventory_item_invoice_void_inventory_item_ajax_list')}}";
+                details.settings.invetoryItemId = "{{ inventoryItem.idencoded }}";
+                details.init();
+        });
+        //]]>
+    </script>
+
+{% endblock %}

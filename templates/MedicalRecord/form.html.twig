@@ -1,0 +1,214 @@
+{% extends 'content.html.twig' %}
+
+{% block pageContent %}
+    
+    <div class="content-wrapper" style="min-height: 847px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">{{ page_title }}</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item "> <a href="path('pet')"> Pet</a></li>
+                            <li class="breadcrumb-item "> <a href="path('pet_detail', { id: medicalRecord.admissionpet.pet.idencoded })"> Pet Details</a></li>
+                            <li class="breadcrumb-item active">{{ page_title }}</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div  class="dataTables_wrapper dt-bootstrap4">
+                                    <form action="{{ path('medical_record_form', { action: action, id: id})}}" method="POST" enctype='multipart/form-data'>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="card card-primary">
+                                                    <div class="card-body">
+                                                        <div class="form-group">
+                                                            {{ form_label(form.weight)}}
+                                                            {{ form_widget(form.weight)}}
+                                                        </div>
+                                                        <div class="form-group">
+                                                            {{ form_label(form.temperature)}}
+                                                            {{ form_widget(form.temperature)}}
+                                                        </div>
+                                                        <div class="form-group">
+                                                            {{ form_label(form.primary_complain)}}
+                                                            {{ form_widget(form.primary_complain)}}
+                                                        </div>
+                                                            <div class="form-group">
+                                                            {{ form_label(form.medical_interpretation)}}
+                                                            {{ form_widget(form.medical_interpretation)}}
+                                                        </div>
+                                                        <div class="form-group">
+                                                            {{ form_label(form.remarks)}}
+                                                            {{ form_widget(form.remarks)}}
+                                                        </div>
+                                                        <div class="form-group">
+                                                            {{ form_label(form.diagnosis)}}
+                                                            {{ form_widget(form.diagnosis)}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card card-primary">
+                                                    <div class="card-body">
+                                                        <div class='form-group row'>
+                                                            <label>Laboratory</label>
+                                                            <div class='col-12'>
+                                                                <input type="file" class="form-control" value=""  name="medical_record[laboratory][]" accept="image/png, image/gif, image/jpeg" multiple="multiple" />
+                                                                <div> 
+                                                                    {% if medicalRecord.medicalrecordlaboratories|length > 0 %}
+                                                                        {% set labCtr = medicalRecord.medicalrecordlaboratories|length %}
+                                                                    
+                                                                        {% for k, laboratory in medicalRecord.medicalrecordlaboratories %}
+                                                                            <small><a href="{{ laboratory.fileWebPath }}" target="_blank">{{ laboratory.filedesc }}</a></small>
+
+                                                                            {% if (k + 1) != labCtr %}
+                                                                            ,
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {% if medicalRecord.admissionpet.admission.admissiontype.description == 'Spay/Neuter Surgery' %}
+                                                            <div class='form-group row'>
+                                                                <label>Photos</label>
+                                                                <div class='col-12'>
+                                                                    <input type="file" class="form-control" value=""  name="medical_record[photo][]" accept="image/png, image/gif, image/jpeg" multiple="multiple" />
+                                                                    <div> 
+                                                                        {% if medicalRecord.medicalrecordphotos|length > 0 %}
+                                                                            {% set labCtr = medicalRecord.medicalrecordphotos|length %}
+                                                                        
+                                                                            {% for k, photo in medicalRecord.medicalrecordphotos %}
+                                                                                <small><a href="{{ photo.fileWebPath }}" target="_blank">{{ photo.filedesc }}</a></small>
+
+                                                                                {% if (k + 1) != labCtr %}
+                                                                                ,
+                                                                                {% endif %}
+                                                                            {% endfor %}
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                        <div class='form-group row'>
+                                                            <label>Prescription</label>
+                                                            <div class='col-12'>
+                                                                <div class='text-right'>
+                                                                    <input type="text" class='form-control prescription_item_desc' id="prescription_item_desc" />
+                                                                    <input type="hidden" class='form-control prescription_item_id' id="prescription_item_id" /> 
+                                                                    <a href="javascript:void(0);" class="href-add"  data-target="prescriptionItemTable" data-desc="prescription_item_desc" data-id="prescription_item_id">Add Item</a>
+                                                                </div>
+                                                            </div>
+                                                            <div class='col-12'>
+                                                                <table width="100%" id="prescriptionItemTable">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <td><strong>Item</strong></td>
+                                                                            <td><strong>Quantity</strong></td>
+                                                                            <td><strong>Remarks</strong></td>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody >
+                                        
+                                                                        {% for k2, medicalRecordItem in medicalRecord.medicalrecordprescriptioninventoryitems %}
+                                                                            <tr>
+                                                                                <td> {{medicalRecordItem.inventoryitem.item.description }}
+                                                                                    <input type="hidden" class='items' name="medical_record[prescription_item][{{k2}}][id]" value="{{medicalRecordItem.inventoryitem.id}}">
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input class="form-control amt" type="text" name="medical_record[prescription_item][{{k2}}][quantity]" value="{{medicalRecordItem.quantity}}" required>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input class="form-control" type="text" name="medical_record[prescription_item][{{k2}}][remarks]" value="{{medicalRecordItem.remarks}}">
+                                                                                </td>
+                                                                            </tr>
+                                                                        {% endfor %}
+                                                                
+                                                                    </tbody>
+                                                                </table>    
+                                                            </div>
+                                                        </div>
+                                                        <div class='form-group row'>
+                                                            <div class='col-12'>
+                                                                <h5> <strong>Next Schedules</strong></h5>
+                                                                <div class='remarks-to-clone-container'>
+                                                                    {% if medicalRecord is defined and medicalRecord.schedules is defined %}
+                                                                        {% for k2, schedule in medicalRecord.schedules %}
+                                                                            {% if schedule.isdeleted not in [1,'NULL'] %}
+                                                                                <div class='remarks-to-clone clone'>
+                                                                                    <div class='form-group row'>
+                                                                                        <div class='col-4'>
+                                                                                            <label>Date:</label>
+                                                                                            <input type="text" class="form-control datepicker" value="{{ schedule.scheduledate|date('m/d/Y') }}"  name="medical_record[schedule][{{k2}}][returned_date]"  required/>
+                                                                                            <input type="hidden" class="form-control" value="{{ schedule.idencoded }}"  name="medical_record[schedule][{{k2}}][id]"/>
+                                                                                        </div>
+                                                                                        <div class='col-8'>
+                                                                                            <label>Remarks:</label>
+                                                                                            <input type="text" class="form-control" value="{{ schedule.remarks }}"  name="medical_record[schedule][{{k2}}][remarks]"  required/>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    {% endif %}
+                                                                </div>
+                                                                <div class="text-right">
+                                                                    <a href="javascript:void(0);" data-target='remarks-to-clone' class="href-clone">
+                                                                        Add Schedules
+                                                                    </a>
+                                                                </div>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='col-12'>
+                                                <div class="card-footer text-right">
+                                                    <button type="submit" class="btn just-continue btn-primary" name="action" value="{{ action }}"
+                                                        data-message="Are you sure you want to save this information?">Submit</button>
+                                                        {% if action == 'u' and (userData.type == 'Super Admin') %}
+                                                        <button type="submit" class="ask-continue btn  btn-danger" name="action" value="d"
+                                                                data-message="Are you sure you want to delete this record?">Delete</button>
+                                                    {% endif %}
+                                                    <a href="{{ path('pet_details', { id : medicalRecord.admissionpet.pet.idencoded}) }}" class="button secondary btn btn-secondary">Back</a>
+                                                </div>
+
+                                                {{ form_widget(form.action) }}
+                                                {{ form_widget(form.id) }}
+                                                {{ form_widget(form._token) }}
+                                            </div>
+                                        </div>
+                                    </form> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    {% include 'js.html.twig' %}
+
+       
+    <script language="javascript">
+        //<![CDATA[
+        $(document).ready(function(){
+            medical_form.settings.formAction = "{{ action }}";
+            medical_form.settings.inventoryItemAutompleteUrl = "{{ path('inventory_item_autocomplete') }}";
+            medical_form.init();
+        });
+        //]]>
+    </script>
+{% endblock %}

@@ -1,0 +1,106 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">Invoice# {{ invoice.id}}</h5>
+</div>
+<div class="modal-body">
+    <div class="card card-primary">
+        
+        <div class="card-body">
+            <div class='mt-3'>
+                <h5>Admission Items</h5>
+                <table class="table dataTable">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Buying Price</th>
+                            <th>Selling Price</th>
+                            <th>Discount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invoiceInventoryItem in invoice.invoiceadmissioninventoryitems %}
+                            <tr>
+                                <th>{{ invoiceInventoryItem.inventoryitem.item.description }}</th>
+                                <th>{{invoiceInventoryItem.quantity|number_format(2, '.', ',') }}</th>
+                                <th>{{invoiceInventoryItem.buyingprice|number_format(2, '.', ',') }}</th>
+                                <th>{{invoiceInventoryItem.sellingprice|number_format(2, '.', ',') }}</th>
+                                <th>{{ (((invoiceInventoryItem.quantity * invoiceInventoryItem.sellingprice) *   invoiceInventoryItem.discount) / 100)|number_format(2, '.', ',') }}</th>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class='mt-3'>
+                <h5>Invoice Items</h5>
+                <table class="table dataTable">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Buying Price</th>
+                            <th>Selling Price</th>
+                            <th>Discount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invoiceInventoryItem in invoice.invoiceinventoryitems %}
+                            <tr>
+                                <th>{{ invoiceInventoryItem.inventoryitem.item.description }}</th>
+                                <th>{{invoiceInventoryItem.quantity|number_format(2, '.', ',') }}</th>
+                                <th>{{invoiceInventoryItem.buyingprice|number_format(2, '.', ',') }}</th>
+                                <th>{{invoiceInventoryItem.sellingprice|number_format(2, '.', ',') }}</th>
+                                <th>{{ (((invoiceInventoryItem.quantity * invoiceInventoryItem.sellingprice) *   invoiceInventoryItem.discount) / 100)|number_format(2, '.', ',') }}</th>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+             <div class='mt-3'>
+                <h5>Admission Services</h5>
+                <table class="table dataTable">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Discount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invoiceService in invoice.invoiceadmissionservices %}
+                            <tr>
+                                <th>{{ invoiceService.service.description }}</th>
+                                <th>{{invoiceService.quantity|number_format(2, '.', ',') }}</th>
+                                <th>{{invoiceService.amount|number_format(2, '.', ',') }}</th>
+                                <th>{{ (((invoiceService.quantity * invoiceService.amount)  * invoiceService.discount) / 100)|number_format(2, '.', ',') }}</th>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+             <div class='mt-3'>
+                <h5>Invoice Services</h5>
+                <table class="table dataTable">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Discount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invoiceService in invoice.invoiceservices %}
+                            <tr>
+                                <th>{{ invoiceService.service.description }}</th>
+                                <th>{{invoiceService.quantity }}</th>
+                                <th>{{invoiceService.amount }}</th>
+                                <th>{{ (((invoiceService.quantity * invoiceService.amount)  * invoiceService.discount) / 100)|number_format(2, '.', ',') }}</th>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

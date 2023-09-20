@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Calibri:400,700,400italic,700italic">
+	
+	<style>
+
+        table thead tr td{
+			font-family: 'Calibri'!important;
+			font-size: 18px;
+			border: 2px solid #000;
+			padding:5px;
+			margin:0px!important;
+			border-spacing: -10px!important;
+            font-weight: 600;
+			
+		}
+
+        table  tr td{
+			font-family: 'Calibri'!important;
+			font-size: 18px;
+			margin:0px!important;
+			border-spacing: -10px!important;
+			
+		}
+
+        .text-center{
+            text-align:center;
+        }
+
+        .text-right{
+            text-align:right;
+        }
+
+        .bold{
+            font-weight: 600;
+        }
+
+		table { border-collapse: collapse; }
+	</style>
+</head>
+<body style="font-family:Calibri;">
+
+    <div><h2>Billing Invoice Report </h2></div>
+    <div> {{ startDate is not null ?  startDate : ''  }} {{ endDate is not null ? ' - ' ~ endDate : ''  }}</div>
+    <div>
+        <table  width="100%">
+            <thead>
+                <tr>
+                    <td class='text-center'>Invoice #</td>
+                    <td class='text-center'>Client</td>
+                    <td class='text-center'>Date</td>
+                    <td class='text-right'>Amount Due</td>
+                    <td class='text-right'>Discount</td>
+                    <td class='text-right'>Paid Amount</td>
+                    <td class='text-right'>Reimbursed Amount</td>
+                    <td class='text-right'>Balance Amount</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% set totalPayment = 0 %}
+                {% set totalRemainingBalance  = 0 %}
+                {% set totalReimbursed = 0 %}
+
+                {% for invoiceTransaction in invoiceTransactions %}
+                    {% set totalPayment = totalPayment + invoiceTransaction['paymentAmount'] %}
+                    {% set totalRemainingBalance = totalRemainingBalance + invoiceTransaction['remainingBalance'] %}
+                     {% set totalReimbursed = totalReimbursed + invoiceTransaction['reimbursedAmount'] %}
+
+
+                    <tr>
+                        <td class='text-center'>{{ invoiceTransaction['invoiceId']}}</td>
+                        <td class='text-center'>{{ invoiceTransaction['client']}}</td>
+                        <td class='text-center'>{{ invoiceTransaction['invoiceDate']}}</td>
+                        <td class='text-right'>{{ invoiceTransaction['totalPrice']}}</td>
+                        <td class='text-right'>{{ invoiceTransaction['grandDiscount']}}</td>
+                        <td class='text-right'>{{ invoiceTransaction['paymentAmount']}}</td>
+                        <td class='text-right'>{{ invoiceTransaction['reimbursedAmount']}}</td>
+                        <td class='text-right'>{{ invoiceTransaction['remainingBalance']}}</td>
+                    </tr>
+                {% endfor %}
+                  <tr>
+                        <td class='text-right bold' colspan="5"> Total: </td>
+                        <td class='text-right'>{{ totalPayment }}</td>
+                         <td class='text-right'>{{ totalReimbursed }}</td>
+                        <td class='text-right'>{{ totalRemainingBalance }}</td>
+
+                    </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{ page_title }}</h5>
+</div>
+<div class="modal-body">
+    <div class="card card-primary">
+         <div class="alert alert-danger errors d-none" role="alert" >
+       
+        </div>
+        <div class="alert alert-success success d-none" role="alert" >
+       
+        </div>
+        <div class="card-body">
+             <form id="petForm">
+                <div class="form-group">
+                    <label class='middle required required'>Please select new owner</label>
+                    <input type='text' name='client_pet_form[client_desc]' class='form-control' id='client_desc'/>
+                    <input type='hidden' name='client_pet_form[client]' class='form-control' id="client"/>
+                    <input type='hidden' name='client_pet_form[client_pet]' class='form-control' value='{{clientPetId}}' />
+                </div>
+                <div class="card-footer text-right">
+                    <button type="button" class=" btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="ask-continue btn btn-primary"  name="action" data-message="Are you sure you want to transfer this record?">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script language="javascript">
+    //<![CDATA[
+    $(document).ready(function(){
+           
+            var clientAutoCompleteUrl = "{{ path('client_autocomplete')}}";
+            var clientPetTransferFormActionUrl = '{{ path("pet_ajax_transfer_form_process")}}';
+            global.autocomplete.bind(clientAutoCompleteUrl,'#client_desc','#client');
+            global.bindFormSubmitted();
+
+            $('.close-modal').unbind('click').bind('click',function(){
+                $('.modal').modal('hide');
+            });
+
+            $('#petForm').submit(function(e){
+                e.preventDefault();
+                _this = $(this);
+                _this.find(':input[type=submit]').prop('disabled', true);
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    url: clientPetTransferFormActionUrl,
+                    data: formData, 
+                    type: "post",
+                    dataType: "JSON",
+                    success: function(r){
+                        if(r.success){
+                            client_details.dataListPet.draw();
+                            $.toaster({ message : r.msg, title : '', priority : 'success' });
+                            $('.modal').modal('hide');
+                        } else {
+                            $('.errors').html(r.msg).removeClass('d-none');
+
+                            setTimeout(function() { 
+                                    $('.errors').html(r.msg).addClass('d-none');
+                                    _this.find(':input[type=submit]').prop('disabled', false);
+                                }, 2000);
+
+                        }
+                    }
+                });
+            });
+    });
+    //]]>
+</script>

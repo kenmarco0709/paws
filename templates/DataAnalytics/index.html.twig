@@ -1,0 +1,175 @@
+{% extends 'content.html.twig' %}
+
+{% block pageContent %}
+    
+    <div class="content-wrapper" style="min-height: 847px;" id="dashboard">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Data Analytics</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item active">Data Analytics</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3 id="dailySales" class='loader'></h3>
+                                <p>Daily Sales</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3 id="monthlySales" class='loader'></h3>
+                                <p>Monthly Sales</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                        </div>
+                    </div>
+                       <div class="col-lg-3 col-6">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3 id="dailyClient" class='loader'></h3>
+                                <p>Daily Clients</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-user"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3 id="monthlyClient" class='loader'></h3>
+                                <p>Monthly Clients</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-user"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>    
+                <div class='row'>
+                 <div class="col-md-6">
+
+                        <div class="card card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Daily Sales</h3>    
+                            </div>
+                            <div class="card-body">
+                                <div class="chart">
+                                    <div class="chartjs-size-monitor loader">
+                                        <div class="chartjs-size-monitor-expand">
+                                            <div class=""></div>
+                                        </div>
+                                        <div class="chartjs-size-monitor-shrink">
+                                            <div class=""></div>
+                                        </div>
+                                    </div>
+                                    <canvas id="lineChart-daily" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 764px;" width="764" height="250" class="chartjs-render-monitor"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+
+                        <div class="card card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Monthly Sales</h3>    
+                            </div>
+                            <div class="card-body">
+                                <div class="chart">
+                                    <div class="chartjs-size-monitor loader">
+                                        <div class="chartjs-size-monitor-expand">
+                                            <div class=""></div>
+                                        </div>
+                                        <div class="chartjs-size-monitor-shrink">
+                                            <div class=""></div>
+                                        </div>
+                                    </div>
+                                    <canvas id="lineChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 764px;" width="764" height="250" class="chartjs-render-monitor"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class='row'>
+                 <div class="col-md-6">
+
+                        <div class="card card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Daily Clients</h3>    
+                            </div>
+                            <div class="card-body">
+                                <div class="chart">
+                                    <div class="chartjs-size-monitor loader">
+                                        <div class="chartjs-size-monitor-expand">
+                                            <div class=""></div>
+                                        </div>
+                                        <div class="chartjs-size-monitor-shrink">
+                                            <div class=""></div>
+                                        </div>
+                                    </div>
+                                    <canvas id="lineChart-daily-clients" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 764px;" width="764" height="250" class="chartjs-render-monitor"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+
+                        <div class="card card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Monthly Clients</h3>    
+                            </div>
+                            <div class="card-body">
+                                <div class="chart">
+                                    <div class="chartjs-size-monitor loader">
+                                        <div class="chartjs-size-monitor-expand">
+                                            <div class=""></div>
+                                        </div>
+                                        <div class="chartjs-size-monitor-shrink">
+                                            <div class=""></div>
+                                        </div>
+                                    </div>
+                                    <canvas id="lineChart-monthly-clients" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 764px;" width="764" height="250" class="chartjs-render-monitor"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+     {% include 'js.html.twig' %}
+     <script language="javascript">
+        //<![CDATA[
+        $(document).ready(function(){
+            dashboard.settings.clientGetCtrAjax = "{{ path('client_ajax_get_client') }}";
+            dashboard.settings.paymentGetCtrAjax = "{{ path('payment_ajax_get_ctr') }}";
+            dashboard.settings.paymentGetYearAnalyticsAjax = "{{ path('payment_ajax_get_yearly_analytics') }}";
+            dashboard.settings.paymentGetMonthlyAnalyticsAjax = "{{ path('payment_ajax_get_monthly_analytics') }}";
+            dashboard.settings.clientGetMonthlyAnalyticsAjax = "{{ path('client_ajax_get_monthly_analytics') }}";
+            dashboard.settings.clientGetYearlyAnalyticsAjax = "{{ path('client_ajax_get_yearly_analytics') }}";
+            dashboard.init();
+        });
+        //]]>
+    </script>
+
+{% endblock %}

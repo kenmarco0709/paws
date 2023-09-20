@@ -1,0 +1,71 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{ page_title }}</h5>
+</div>
+<div class="modal-body">
+    <div class="card card-primary">
+         <div class="alert alert-danger errors d-none" role="alert" >
+       
+        </div>
+        <div class="alert alert-success success d-none" role="alert" >
+       
+        </div>
+        <div class="card-body">
+             <form id="petForm">
+                <div class="form-group">
+                    <label class='middle required required'>Please put receiver email address</label>
+                    <input type='email' name='pet_form[email]' class='form-control' required/>
+                    <input type='hidden' name='pet_form[id]' class='form-control' value="{{ id }}" />
+                </div>
+                <div class="card-footer text-right">
+                    <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary"  name="action" >Submit </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script language="javascript">
+    //<![CDATA[
+    $(document).ready(function(){
+            var sendMedicalRecordAjaxUrlProcess = "{{ path('pet_ajax_send_medical_record_form_process')}}";
+
+            $('.close-modal').unbind('click').bind('click',function(){
+                $('.modal').modal('hide');
+            });
+
+            $('#petForm').submit(function(e){
+                e.preventDefault();
+                _this = $(this);
+                _this.find(':input[type=submit]').prop('disabled', true);
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    url: sendMedicalRecordAjaxUrlProcess,
+                    data: formData, 
+                    type: "post",
+                    dataType: "JSON",
+                    beforeSend: function(){
+                        _this.find('.btn-primary').html('<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>');
+                    },
+                    success: function(r){
+                        if(r.success){
+                    
+                            $.toaster({ message : r.msg, title : '', priority : 'success' });
+                            $('.modal').modal('hide');
+                        } else {
+                            $('.errors').html(r.msg).removeClass('d-none');
+
+                            setTimeout(function() { 
+                                    $('.errors').html(r.msg).addClass('d-none');
+                                    _this.find(':input[type=submit]').prop('disabled', false);
+                                    _this.find('.btn-primary').html('Send');
+
+                                }, 2000);
+
+                        }
+                    }
+                });
+            });
+    });
+    //]]>
+</script>

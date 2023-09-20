@@ -1,0 +1,437 @@
+{% set userData = app.session.get('userData') %} 
+
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{ page_title }}</h5>
+</div>
+<div class="modal-body">
+    <div class="card card-primary">
+         <div class="alert alert-danger errors d-none" role="alert" >
+       
+        </div>
+        <div class="alert alert-success success d-none" role="alert" >
+       
+        </div>
+        <div class="card-body">
+            <form id="form" enctype='multipart/form-data'>
+                <div class='container-fluid'>
+                    <div class='row'>
+                        <div class='col-6'>
+                           <div class='card  card-primary'>
+                                <div class="card-header">
+                                    Vet Information
+                                </div>
+                                <div class='card-body'>
+                                    <div class='container-fluid'>
+                                        <div class='row'>
+                                            <div class='col-6'>
+                                                <div class="form-group">
+                                                    {{ form_label(form.attending_vet_desc) }}
+                                                    {{ form_widget(form.attending_vet_desc) }}
+                                                    {{ form_widget(form.attending_vet) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                           </div>
+                           <div class='card card-primary'>
+                                <div class="card-header">
+                                    Clinical Examination
+                                </div>
+                                <div class='card-body'>
+                                    <div class='container-fluid'>
+                                        <div class='row'>
+                                            <div class='col-6'>
+                                                <div class="form-group">
+                                                    {{ form_label(form.weight) }}
+                                                    {{ form_widget(form.weight) }}
+                                                </div>
+                                            </div>
+                                            <div class='col-6'>
+                                                <div class="form-group">
+                                                    {{ form_label(form.temperature) }}
+                                                    {{ form_widget(form.temperature) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                         <div class='row'>
+                                            <div class='col-12'>
+                                                <div class="form-group">
+                                                    {{ form_label(form.primary_complain) }}
+                                                    {{ form_widget(form.primary_complain) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                           </div>
+
+                           {% if admissionType.description == 'Vaccination' %}
+                                <div class='card card-primary'>
+                                    <div class="card-header">
+                                        Vaccine Information
+                                    </div>
+                                    <div class='card-body'>
+                                        <div class='container-fluid'>
+                                            <div class='row'>
+                                                <div class='col-6'>
+                                                    <div class="form-group">
+                                                        {{ form_label(form.vaccine_due_date) }}
+                                                        {{ form_widget(form.vaccine_due_date) }}
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="middle required">Card Photo</label>                                                     
+                                                        <input type="file" class="form-control" value=""  name="shelter_medical_record[laboratory][]" accept="image/png, image/gif, image/jpeg" multiple="multiple" />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <table width="100%" class='table'>
+                                                            <tbody >
+                                                                {% for k, laboratory in medicalRecord.medicalrecordlaboratories %}
+                                                                    {% if not laboratory.isdeleted %}
+                                                                        <tr>
+                                                                            <td>
+                                                                                <input type='hidden' value='{{laboratory.idencoded}}' name='shelter_medical_record_form[laboratory_id][{{k}}]' />
+                                                                                <a class="remove" href="javascript:void(0);"><i style="color:red;margin-right:5px;" class="fa fa-times" aria-hidden="true"></i> </a>
+                                                                                <a href="{{laboratory.fileWebPath}}" target="_blank"> {{ laboratory.filedesc}}</a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>  
+                                                    </div>
+                                                </div>
+                                                <div class='col-6'>
+                                                    <div class="form-group">
+                                                        {{ form_label(form.vaccine_lot_no) }}
+                                                        {{ form_widget(form.vaccine_lot_no) }}
+                                                    </div>
+                                                    <div class="form-group">
+                                                        {{ form_label(form.vaccine_expiration_date) }}
+                                                        {{ form_widget(form.vaccine_expiration_date) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class='card card-primary'>
+                                    <div class="card-header">
+                                        Laboratory / Interpretations / Diagnosis
+                                    </div>
+                                    <div class='card-body'>
+                                        <div class='container-fluid'>
+                                            <div class='row'>
+                                                <div class='col-6'>
+                                                    <div class="form-group">
+                                                        {{ form_label(form.medical_interpretation) }}
+                                                        {{ form_widget(form.medical_interpretation) }}
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="middle required">Laboratory</label>                                                     
+                                                        <input type="file" class="form-control" value=""  name="shelter_medical_record[laboratory][]" accept="image/png, image/gif, image/jpeg" multiple="multiple" />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <table width="100%" class='table'>
+                                                            <tbody >
+                                                                {% for k, laboratory in medicalRecord.medicalrecordlaboratories %}
+                                                                    {% if not laboratory.isdeleted %}
+                                                                        <tr>
+                                                                            <td>
+                                                                                <input type='hidden' value='{{laboratory.idencoded}}' name='shelter_medical_record_form[laboratory_id][{{k}}]' />
+                                                                                <a class="remove" href="javascript:void(0);"><i style="color:red;margin-right:5px;" class="fa fa-times" aria-hidden="true"></i> </a>
+                                                                                <a href="{{laboratory.fileWebPath}}" target="_blank"> {{ laboratory.filedesc}}</a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>  
+                                                    </div>
+                                                </div>
+                                                <div class='col-6'>
+                                                    <div class="form-group">
+                                                        {{ form_label(form.diagnosis) }}
+                                                        {{ form_widget(form.diagnosis) }}
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                           {% endif %}
+                            <div class='card card-primary'>
+                                <div class="card-header">
+                                    Prescription
+                                </div>
+                                <div class='card-body'>
+                                    <div class='container-fluid'>
+                                        <div class='row'>
+                                            <div class='col-12'>
+                                                <div class='row'>
+                                                    <div class='col-6 '>&nbsp;</div>
+                                                    <div class='col-6 '>
+                                                        <div class='text-right'>
+                                                            <input type="text" class='form-control prescription_item_desc' id="prescription_item_desc" />
+                                                            <input type="hidden" class='form-control prescription_item_id' id="prescription_item_id" /> 
+                                                            <a href="javascript:void(0);" class="href-add"  data-target="prescriptionItemTable" data-desc="prescription_item_desc" data-id="prescription_item_id">Add Item</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class='row'>
+                                                    <div class='col-12'>
+                                                        <table width="100%" id="prescriptionItemTable" class='table table-bordered' style='text-align:center;'>
+                                                            <thead>
+                                                                <tr>
+                                                                    <td><strong>Item</strong></td>
+                                                                    <td style='width:20%;'><strong>Quantity</strong></td>
+                                                                    <td><strong>Remarks</strong></td>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for k, prescription in medicalRecord.medicalRecordPrescriptionInventoryItems %}
+                                                                    {% if not  prescription.isdeleted %}
+                                                                        <tr>
+                                                                            <td>
+                                                                                <a data-id="prescription_item_id" data-type="prescriptionItemListIds" class="remove" href="javascript:void(0);">
+                                                                                    <i style="color:red;margin-right:5px;" class="fa fa-times" aria-hidden="true"></i>
+                                                                                </a>
+                                                                                {{prescription.inventoryitem.item.description}}
+                                                                                <input class='prescription-items' type="hidden" name="shelter_medical_record_form[prescription_item][{{k}}][id]" value="{{prescription.inventoryitem.id}}">
+                                                                                <input type="hidden" name="shelter_medical_record_form[prescription_item][{{k}}][prescription_item_id]" value="{{prescription.id}}">
+                                                                                <input type="hidden" name="shelter_medical_record_form[prescription_item_id][{{k}}]" value="{{prescription.id}}">
+
+
+                                                                            </td>
+                                                                            <td>
+                                                                                <input class="amt form-control" type="text" name="shelter_medical_record_form[prescription_item][{{k}}][quantity]" value="{{prescription.quantity}}" required="">
+                                                                            </td>
+                                                                            <td>
+                                                                                <input class="form-control" type="text" name="shelter_medical_record_form[prescription_item][{{k}}][remarks]" value="{{prescription.remarks}}">
+                                                                            </td>
+                                                                        </tr>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>    
+                                                    </div>
+                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-6'>
+                            {% if admissionType.description == 'Vaccination' %}
+                                <div class='card card-primary'>
+                                    <div class="card-header">
+                                        Vaccines
+                                    </div>
+                                    <div class='card-body'>
+                                        <div class='container-fluid'>
+                                            <div class='row'>
+                                                <div class='col-12'>
+                                                    {% for k2, vaccinne in vaccinnes %}
+                                                        <div class="icheck-primary">
+                                                            <input type="checkbox" id="service{{k2}}" name="shelter_medical_record_form[service][{{k2}}]" value="{{ vaccinne['id'] }}"  {{ vaccinne['id'] in medicalRecord.medicalRecordServiceIdsArray ? 'checked' : ''}}>
+                                                            <label for="service{{k2}}">{{ vaccinne['description']}}</label>
+                                                        </div> 
+                                                    {% endfor %}
+                                                </div>
+                                                <div class='col-12'>
+                                                    <div class='text-right'> Total Expense: {{ medicalRecord.getTotalServiceExpense }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class='card card-primary'>
+                                    <div class="card-header">
+                                        Items
+                                    </div>
+                                    <div class='card-body'>
+                                        <div class='container-fluid'>
+                                            <div class='row'>
+                                                <div class='col-12'>
+                                                    <div class='row'>
+                                                        <div class='col-6 '>&nbsp;</div>
+                                                        <div class='col-6 '>
+                                                            <div class='text-right'>
+                                                                <input type="text" class='form-control' id="service_item_desc" />
+                                                                <input type="hidden" class='form-control' id="service_item_id" /> 
+                                                                <a href="javascript:void(0);" class="href-add"  data-target="serviceItemTable" data-desc="service_item_desc" data-id="service_item_id">Add Item</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class='row'>
+                                                        <div class='col-12'>
+                                                            <table width="100%" id="serviceItemTable" class='table table-bordered' style='text-align:center;'>
+                                                                <thead>
+                                                                    <tr>
+                                                                        <td><strong>Item</strong></td>
+                                                                        <td style='width:20%;'><strong>Quantity</strong></td>
+                                                                        <td><strong>Remarks</strong></td>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody >
+                                                                    {% for k, item in medicalRecord.medicalrecorditems %}
+                                                                        {% if not  item.isdeleted %}
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <a class="remove" href="javascript:void(0);"  data-type="serviceItemListIds">
+                                                                                        <i style="color:red;margin-right:5px;" class="fa fa-times" aria-hidden="true"></i>
+                                                                                    </a>
+                                                                                    {{item.inventoryitem.item.description}}
+                                                                                    <input class='items' type="hidden" name="shelter_medical_record_form[service_item][{{k}}][id]" value="{{item.inventoryitem.id}}">
+                                                                                    <input type="hidden" name="shelter_medical_record_form[service_item][{{k}}][service_item_id]" value="{{item.id}}">
+                                                                                    <input type="hidden" name="shelter_medical_record_form[service_item_id][{{k}}]" value="{{item.id}}">
+
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input class="amt form-control" type="text" name="shelter_medical_record_form[service_item][{{k}}][quantity]" value="{{item.quantity}}" required="">
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input class="form-control" type="text" name="shelter_medical_record_form[service_item][{{k}}][remarks]" value="{{item.remarks}}">
+                                                                                </td>
+                                                                            </tr>
+                                                                        {% endif %}
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>    
+                                                        </div>
+                                                        <div class='col-12'>
+                                                            <div class='text-right'> Total Expense: {{ medicalRecord.getTotalItemExpense }}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>    
+                                <div class='card card-primary'>
+                                    <div class="card-header">
+                                        Treatments
+                                    </div>
+                                    <div class='card-body'>
+                                        <div class='container-fluid'>
+                                            <div class='row'>
+                                                <div class='col-12'>
+                                                    <div class='row'>
+                                                        <div class='col-6 '>&nbsp;</div>
+                                                        <div class='col-6 '>
+                                                            <div class='text-right'>
+                                                                <input type="text" class='form-control' id="treatment_desc" />
+                                                                <input type="hidden" class='form-control' id="treatment_id" /> 
+                                                                <a href="javascript:void(0);" class="href-add"  data-target="treatmentItemTable" data-desc="treatment_desc" data-id="treatment_id">Add Item</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class='row'>
+                                                        <div class='col-12'>
+                                                            <table width="100%" id="treatmentItemTable" class='table table-bordered' style='text-align:center;'>
+                                                                <thead>
+                                                                    <tr>
+                                                                        <td><strong>Item</strong></td>
+                                                                        <td><strong>Remarks</strong></td>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody >
+                                                                    {% for k, service in medicalRecord.medicalrecordservices %}
+                                                                        {% if not  service.isdeleted %}
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <a class="remove" href="javascript:void(0);"  data-type="serviceListIds">
+                                                                                        <i style="color:red;margin-right:5px;" class="fa fa-times" aria-hidden="true"></i>
+                                                                                    </a>
+                                                                                    {{service.service.description}}
+                                                                                    <input class='services' type="hidden" name="shelter_medical_record_form[treatment][{{k}}][id]" value="{{service.service.id}}" />
+                                                                                    <input type="hidden" name="shelter_medical_record_form[treatment][{{k}}][treatment_id]" value="{{service.id}}" />
+                                                                                    <input type="hidden" name="shelter_medical_record_form[treatment_id][{{k}}]" value="{{service.id}}" />
+
+
+                                                                                </td>
+                                                                                <td>
+                                                                                    <input class="form-control" type="text" name="shelter_medical_record_form[treatment][{{k}}][remarks]" value="{{service.remarks}}">
+                                                                                </td>
+                                                                            </tr>
+                                                                        {% endif %}
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>    
+                                                        </div>
+                                                        <div class='col-12'>
+                                                            <div class='text-right'> Total Expense: {{ medicalRecord.getTotalServiceExpense }}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> 
+                            {% endif %}
+                            <div class='card card-primary'>
+                                <div class="card-header">
+                                    Remarks
+                                </div>
+                                <div class='card-body'>
+                                    <div class='container-fluid'>
+                                        <div class='row'>
+                                            <div class='col-12'>
+                                                <div class="form-group">
+                                                    {{ form_label(form.remarks) }}
+                                                    {{ form_widget(form.remarks) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                           </div>
+                        
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer text-right">
+                    <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
+                    {% if action == 'u' and (userData.type == 'Super Admin' or 'Client Delete' in userData.accesses) %}
+                        <button type="submit" class="ask-continue btn  btn-danger" name="action" value="d"
+                                data-message="Are you sure you want to delete this record?">Delete</button>
+                    {% endif %}
+                   <button type="submit" class="btn just-continue btn-primary" name="action" value="{{ action }}" data-message="Are you sure you want to save this information?">Submit</button>
+                </div>
+
+                {{ form_widget(form.admission_type) }}
+                {{ form_widget(form.shelter_admission) }}
+                {{ form_widget(form.action) }}
+                {{ form_widget(form.id) }}
+                {{ form_widget(form._token) }}
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% if  javascripts is defined %}
+    {% for script in javascripts %}
+        <script src="{{ script }}?v={{ assets_version }}"></script>
+    {% endfor  %}
+{% endif %}
+
+<script language="javascript">
+    //<![CDATA[
+    $(document).ready(function(){
+            shelterMedicalRecord.settings.processFormUrl = "{{ path('behavior_record_ajax_form_process')}}";
+            shelterMedicalRecord.settings.vetAutocompleteUrl = "{{ path('user_vet_autocomplete') }}";
+            shelterMedicalRecord.settings.inventoryItemAutompleteUrl = "{{ path('inventory_item_autocomplete') }}";
+            shelterMedicalRecord.settings.serviceAutcompleteUrl = "{{ path('service_autocomplete') }}";
+            shelterMedicalRecord.settings.processFormUrl  = "{{ path('shelter_medical_record_ajax_form_process')}}"
+            shelterMedicalRecord.init();
+    });
+    //]]>
+</script>

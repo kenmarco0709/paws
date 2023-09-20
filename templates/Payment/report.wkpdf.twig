@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Calibri:400,700,400italic,700italic">
+	
+	<style>
+
+        table thead tr td{
+			font-family: 'Calibri'!important;
+			font-size: 18px;
+			border: 2px solid #000;
+			padding:5px;
+			margin:0px!important;
+			border-spacing: -10px!important;
+            font-weight: 600;
+			
+		}
+
+        table  tr td{
+			font-family: 'Calibri'!important;
+			font-size: 18px;
+			margin:0px!important;
+			border-spacing: -10px!important;
+			
+		}
+
+        .text-center{
+            text-align:center;
+        }
+
+        .text-right{
+            text-align:right;
+        }
+
+        .bold{
+            font-weight: 600;
+        }
+
+		table { border-collapse: collapse; }
+	</style>
+</head>
+<body style="font-family:Calibri;">
+
+    <div><h2>Payment Report </h2></div>
+    <div> {{ startDate is not null ?  startDate : ''  }} {{ endDate is not null ? ' - ' ~ endDate : ''  }}</div>
+    <div>
+        <table  width="100%">
+            <thead>
+                <tr>
+                    <td class='text-center'>Invoice #</td>
+                    <td class='text-center'>Client</td>
+                    <td class='text-center'>Date</td>
+                    <td class='text-center'>Payment Type</td>
+                    <td class='text-center'>Amount</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% set totalPayment = 0 %}
+                {% set paymentTypes = [] %}
+                {% for paymentReportTransaction in paymentReportTransactions %}
+                    {% if paymentTypes[paymentReportTransaction['paymentType']] is defined %}
+                         {% set paymentTypes = paymentTypes|merge({ (paymentReportTransaction['paymentType']): { 'amount' : paymentReportTransaction['amount'] + paymentTypes[paymentReportTransaction['paymentType']]['amount'] } }) %} 
+                    {% else %}
+                        {% set paymentTypes = paymentTypes|merge({ (paymentReportTransaction['paymentType']): { 'amount' : paymentReportTransaction['amount'] } }) %} 
+
+                    {% endif %}
+                    {% set totalPayment = totalPayment + paymentReportTransaction['amount'] %}
+                    <tr>
+                        <td class='text-center'>{{ paymentReportTransaction['invoiceId']}}</td>
+                        <td class='text-center'>{{ paymentReportTransaction['client']}}</td>
+                        <td class='text-center'>{{ paymentReportTransaction['paymentDate']}}</td>
+                        <td class='text-center'>{{ paymentReportTransaction['paymentType']}}</td>
+                        <td class='text-right'>{{ paymentReportTransaction['amount']}}</td>
+                    </tr>
+                {% endfor %}
+                  <tr>
+                        <td class='text-right bold' colspan="4"> Total: </td>
+                        <td class='text-right'>{{ totalPayment }}</td>
+                    </tr>
+            </tbody>
+        </table>
+    </div>
+
+     <div>
+        <div><h3>Payment Type</h3></div>
+        <table  width="20%">
+            {% set paymentTypeTotal = 0 %}
+            {% for k, paymentType in paymentTypes %}
+                {% set paymentTypeTotal = paymentTypeTotal + paymentType['amount'] %}
+
+                <tr>
+                    <td>{{ k }}</td>
+                    <td class='text-right'>{{ paymentType['amount']}}</td>
+                </tr>
+            {% endfor %}
+               <tr>
+                    <td class='text-right bold'> Total: </td>
+                    <td class='text-right'>{{ paymentTypeTotal }}</td>
+                </tr>
+        </table>
+    </div>
+</body>
+</html>

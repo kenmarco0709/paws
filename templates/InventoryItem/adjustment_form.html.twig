@@ -1,0 +1,107 @@
+{% extends 'content.html.twig' %}
+
+{% block pageContent %}
+    
+    <div class="content-wrapper" style="min-height: 847px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">{{ page_title }}</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item "> <a href="{{path('inventory_item_index')}}"> Inventory </a></li>
+                            <li class="breadcrumb-item "> <a href="{{path('inventory_item_details', { id: inventory_item_id})}}"> Inventory Item Details </a></li>
+                            <li class="breadcrumb-item active">{{ page_title }}</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div  class="dataTables_wrapper dt-bootstrap4">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="card card-primary">
+                                                 {% include 'flash_message.html.twig' %}
+                                                 <form action="{{ path('inventory_item_adjustment_form', { inventory_item_id: inventory_item_id,action: action, id: id})}}" method="POST">
+                                                    
+                                                    <div class="card-body">
+                                                         <div class="form-group" data-toggle="buttons">
+                                                           {{ form_label(form.adjustment_type)}}
+
+                                                        </div>
+
+                                                        <div class="btn-group" data-toggle="buttons">
+                                                            {% for child in form.adjustment_type.children %}
+                                                                <label class="btn btn-defaultl" for="{{ child.vars.id }}" > {{ form_widget(child, {'attr': {'class': ''}}) }} {{ child.vars.label }}</label>   
+                                                            {% endfor %}
+                                                        </div>
+                                                   
+                                                         <div class="form-group">
+                                                            {{ form_label(form.low_quantity)}}
+                                                            {{ form_widget(form.low_quantity)}}
+                                                         </div>
+                                                         <div class="form-group">
+                                                            {{ form_label(form.quantity)}}
+                                                            {{ form_widget(form.quantity)}}
+                                                         </div>
+                                                        <div class="form-group">
+                                                            {{ form_label(form.buying_price)}}
+                                                            {{ form_widget(form.buying_price)}}
+                                                         </div>
+                                                        <div class="form-group">
+                                                            {{ form_label(form.selling_price)}}
+                                                            {{ form_widget(form.selling_price)}}
+                                                         </div>
+                                                          <div class="form-group">
+                                                            {{ form_label(form.remarks)}}
+                                                            {{ form_widget(form.remarks)}}
+                                                         </div>
+                                                    </div>
+                                        
+                                                    <div class="card-footer text-right">
+                                                        <button type="submit" class="btn just-continue btn-primary" name="action" value="{{ action }}"
+                                                            data-message="Are you sure you want to save this information?">Submit</button>
+                                                         {% if action == 'u' and (userData.type == 'Super Admin') or 'Inventory Item Details Adjustment Delete' in userData.accesses %}
+                                                            <button type="submit" class="ask-continue btn  btn-danger" name="action" value="d"
+                                                                    data-message="Are you sure you want to delete this record?">Delete</button>
+                                                        {% endif %}
+                                                        <a href="{{ path('inventory_item_details', { id: inventory_item_id}) }}" class="button secondary btn btn-secondary">Back</a>
+                                                    </div>
+
+                                                    {{ form_widget(form.inventory_item) }}
+                                                     {{ form_widget(form.action) }}
+                                                     {{ form_widget(form.id) }}
+                                                     {{ form_widget(form._token) }}
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    {% include 'js.html.twig' %}
+
+    <script language="javascript">
+        //<![CDATA[
+        $(document).ready(function(){
+            inventory_item.settings.itemAutocompleteUrl = "{{ path('item_autocomplete') }}";  
+            inventory_item.init();
+            
+        });
+        //]]>
+    </script>
+{% endblock %}

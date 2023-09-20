@@ -1,0 +1,75 @@
+{% extends 'content.html.twig' %}
+
+{% block pageContent %}
+    
+    <div class="content-wrapper" style="min-height: 847px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Manage {{ page_title }}</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-payment_type active">{{ page_title }}</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div  class="dataTables_wrapper dt-bootstrap4">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class='container'>
+                                                <div class='row'>
+                                                    <label class="col-2">Start Date</label>
+                                                    <div class="col-sm-4">
+                                                        <input type="text" id="startDate" class='form-control datepicker' />
+                                                    </div>
+                                                    <label class="col-2">End Date</label>
+                                                    <div class="col-sm-4">
+                                                        <input type="text" id="endDate" class='form-control datepicker' />
+                                                    </div>
+                                                </div>
+                                                <div class='row mt-3'>
+                                                    <div class='col-12'>
+                                                        <div class='text-right'>
+                                                            <a href="javascript:void(0);" class='btn btn-danger btn-report' data-url="{{ path('payment_report_pdf') }}"> PDF</a>
+                                                            <a href="javascript:void(0);" class='btn btn-success btn-report' data-url="{{ path('payment_report_csv') }}"> CSV</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    {% include 'js.html.twig' %}
+
+    <script language="javascript">
+        //<![CDATA[
+        $(document).ready(function(){
+
+            $.each($('.btn-report'),function(){
+                var _this = $(this);
+                _this.unbind('click').bind('click',function(){
+                    window.open(_this.data('url') + '?start_date=' + $('#startDate').val() + "&end_date=" + $('#endDate').val(), '_blank');
+                });
+            });
+        });
+        //]]>
+    </script>
+{% endblock %}

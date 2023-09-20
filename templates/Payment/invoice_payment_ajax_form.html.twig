@@ -1,0 +1,78 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{ page_title }}</h5>
+</div>
+<div class="modal-body">
+    <div class="card card-primary">
+         <div class="alert alert-danger errors d-none" role="alert" >
+       
+        </div>
+        <div class="alert alert-success success d-none" role="alert" >
+       
+        </div>
+        <div class="card-body">
+
+            <h5>Invoice # {{ invoice.id}}</h5>
+            Remaining Balance: {{ invoice.amountdue}}
+            <input type='hidden' id="remaining_balance" value="{{invoice.amountdue}}"> 
+            <form id="paymentForm">
+                <div class="form-group">
+                    {{ form_label(form.payment_type_desc) }}
+                    {{ form_widget(form.payment_type_desc) }}
+                    {{ form_widget(form.payment_type) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.payment_date) }}
+                    {{ form_widget(form.payment_date) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.reference_no) }}
+                    {{ form_widget(form.reference_no) }}
+                </div>
+                  <div class="form-group">
+                    {{ form_label(form.amount) }}
+                    {{ form_widget(form.amount) }}
+                </div>
+                <div class="form-check">
+                    {{ form_widget(form.is_deposit) }}
+                    {{ form_label(form.is_deposit) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.amount_change) }}
+                    {{ form_widget(form.amount_change) }}
+                </div>
+                <div class="card-footer text-right">
+                    <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary"  name="action" >Submit</button>
+                </div>
+
+                {{ form_widget(form.invoice) }}
+                {{ form_widget(form.action) }}
+                {{ form_widget(form.id) }}
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% if  javascripts is defined %}
+    {% for script in javascripts %}
+        <script src="{{ script }}?v={{ assets_version }}"></script>
+    {% endfor  %}
+{% endif %}
+
+<script language="javascript">
+    //<![CDATA[
+    $(document).ready(function(){
+
+        global.mask();
+        invoice_payment_form.settings.paymentTypeAutoSuggestUrl = '{{ path('payment_type_autocomplete') }}';
+        invoice_payment_form.settings.paymentProcessFormAjaxUrl = '{{ path('payment_invoice_ajax_form_process') }}';
+        invoice_payment_form.init();
+    });
+    //]]>
+</script>
+
+
+    
+
+

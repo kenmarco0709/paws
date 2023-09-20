@@ -1,0 +1,107 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{ page_title }}</h5>
+</div>
+<div class="modal-body">
+    <div class="card card-primary">
+         <div class="alert alert-danger errors d-none" role="alert" >
+       
+        </div>
+        <div class="alert alert-success success d-none" role="alert" >
+       
+        </div>
+        <div class="card-body">
+            <form id="petForm">
+                <div class="form-group">
+                    {{ form_label(form.name) }}
+                    {{ form_widget(form.name) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.breed_desc) }}
+                    {{ form_widget(form.breed_desc) }}
+                    {{ form_widget(form.breed) }}
+                </div>
+                  <div class="form-group">
+                    {{ form_label(form.birth_date) }}
+                    {{ form_widget(form.birth_date) }}
+                </div>
+                <div class="form-group">
+                     {{ form_label(form.gender) }}
+                    {{ form_widget(form.gender) }}
+                </div>
+                <div class="form-group">
+                     {{ form_label(form.color_markings) }}
+                    {{ form_widget(form.color_markings) }}
+                </div>
+              
+                <div class="card-footer text-right">
+                    <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary"  name="action" >Submit</button>
+                </div>
+
+                {{ form_widget(form.client_id) }}
+                {{ form_widget(form.action) }}
+                {{ form_widget(form.id) }}
+            </form>
+        </div>
+    </div>
+</div>
+
+
+    
+
+
+<script language="javascript">
+    //<![CDATA[
+    $(document).ready(function(){
+            var breedAutoCompleteUrl = "{{ path('breed_autocomplete')}}";
+            global.autocomplete.bind(breedAutoCompleteUrl,'#pet_form_breed_desc','#pet_form_breed');
+            global.mask();
+
+            var clientPetFormActionUrl = "{{ path('pet_ajax_form_process')}}";
+
+            $('.close-modal').unbind('click').bind('click',function(){
+                $('.modal').modal('hide');
+            });
+
+            $('#petForm').submit(function(e){
+                e.preventDefault();
+                _this = $(this);
+                _this.find(':input[type=submit]').prop('disabled', true);
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    url: clientPetFormActionUrl,
+                    data: formData, 
+                    type: "post",
+                    dataType: "JSON",
+                    success: function(r){
+                        if(r.success){
+
+                            if(typeof admission_form != "undefined"){
+                                admission_form.get_client_pets();
+                                $('.success').html(r.msg).removeClass('d-none');
+                            } else if(typeof schedule_form != "undefined") {
+                                  schedule_form.get_client_pets();
+                                $('.success').html(r.msg).removeClass('d-none');
+                            } else {
+                                $.toaster({ message : r.msg, title : '', priority : 'success' });
+
+                            }
+
+                            
+                            $('.modal').modal('hide');
+                        } else {
+                            $('.errors').html(r.msg).removeClass('d-none');
+
+                            setTimeout(function() { 
+                                    $('.errors').html(r.msg).addClass('d-none');
+                                    _this.find(':input[type=submit]').prop('disabled', false);
+                                }, 2000);
+
+                        }
+                    }
+                });
+            });
+    });
+    //]]>
+</script>

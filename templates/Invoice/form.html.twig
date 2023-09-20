@@ -1,0 +1,284 @@
+{% extends 'content.html.twig' %}
+
+{% block pageContent %}
+    
+    <div class="content-wrapper" style="min-height: 847px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-12">
+                        <h1 class="m-0">{{ page_title }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <form method="POST" action="{{ path('invoice_form' , { action :action , id: id})}}" enctype='multipart/form-data'>
+                {% include 'flash_message.html.twig' %}
+                <div class="container-fluid">
+                        <div class='row'>
+                            <div class='col-5'>
+                                <div class="card">
+                                    <div class="card-body">
+                                        {% if userData.type == 'Super Admin' or 'Invoice Client New' in userData.accesses %}
+                                            <div class='text-right'><a href='javascript:void(0);' class='href-modal' data-target='client-form'>New Client</a></div>
+                                        {% endif %}
+                                        <div class='form-group row'>
+                                                 {{ form_label(form.client_desc)}}
+                                            <div class='col-9'>
+                                                {{ form_widget(form.client_desc)}}
+                                                {{ form_widget(form.client)}}
+                                            </div>
+                                        </div>
+                                         <div class='form-group row'>
+                                                 {{ form_label(form.invoice_date)}}
+                                            <div class='col-9'>
+                                                {{ form_widget(form.invoice_date)}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if action == 'u' %}
+                            <div class='row'>
+                                <div class='col-7'>
+                                    <div class='invoice-item mt-5'>
+                                        <div class='container'>
+                                            <div class='row'>
+                                                <div class='col-6'>
+                                                    <div class='text-right'><h6><strong>Services</strong></h6></div>
+                                                    <div class='text-right'>
+                                                        <input type="text" class='form-control service_desc' id="service_desc" />
+                                                        <input type="hidden" class='form-control service_id' id="service_id" /> 
+                                                        <a href="javascript:void(0);" class="href-add" data-type='service'>Add Service</a>
+                                                    </div>
+                                                </div>
+                                                <div class='col-6'>
+                                                    <div class='text-right'><h6><strong>Items</strong></h6></div>
+                                                    <div class='text-right'>
+                                                        <input type="text" class='form-control item_desc' id="item_desc" />
+                                                        <input type="hidden" class='form-control item_id' id="item_id" /> 
+                                                        <a href="javascript:void(0);" class="href-add" data-type='item'>Add Item</a>
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" class='data-field' data-id='' data-description='' data-price='' data-target="table" data-type='' />
+
+                                            </div>
+                                        </div>
+                                        <table class='table' id="table">
+                                            <thead>
+                                                <tr>
+                                                    <td style="width:200px;">Description</td>
+                                                    <td>Price</td>
+                                                    <td>Quantity</td>
+                                                    <td>Disc. % </td>
+                                                    
+                                                    <td>Remarks </td>
+                                                    <td>Total Price</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% if  invoice.invoiceadmissionservices|length  %}
+                                                    {% for k, invoiceAdmissionService in invoice.invoiceadmissionservices %}
+                                                        <tr>
+                                                            <td>
+                                                            {{ invoiceAdmissionService.service.description}}
+                                                                <input type="hidden" name="invoice[admission_service][{{k}}][id]" value="{{ invoiceAdmissionService.service.id}}">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[admission_service][{{k}}][price]" value="{{ invoiceAdmissionService.service.price }}" class="form-control price" readonly>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[admission_service][{{k}}][quantity]" value="{{ invoiceAdmissionService.quantity }}" class="form-control quantity has-computation " readonly>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[admission_service][{{k}}][percent_discount]" value="{{ invoiceAdmissionService.discount }}" class="form-control amt disc has-computation">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[admission_service][{{k}}][remarks]" value="{{ invoiceAdmissionService.remarks }}" class="form-control">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[admission_service][{{k}}][total_price]" value="{{ invoiceAdmissionService.amount }}" class="form-control total-price" readonly="">
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                {% endif %}
+                                                {% if  invoice.invoiceadmissioninventoryitems|length  %}
+                                                    {% for k, invoiceadmissioninventoryitem in invoice.invoiceadmissioninventoryitems %}
+                                                        <tr>
+                                                            <td>
+                                                            {{ invoiceadmissioninventoryitem.inventoryitem.item.description}}
+                                                                <input type="hidden" name="invoice[admission_item][{{k}}][id]" value="{{ invoiceadmissioninventoryitem.inventoryitem.id}}" 
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[admission_item][{{k}}][price]" value="{{ invoiceadmissioninventoryitem.sellingprice }}" class="form-control price" readonly>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[admission_item][{{k}}][quantity]" value="{{ invoiceadmissioninventoryitem.quantity }}" class="form-control quantity has-computation " readonly>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[admission_item][{{k}}][percent_discount]" value="{{ invoiceadmissioninventoryitem.discount }}" class="form-control amt disc has-computation">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[admission_item][{{k}}][remarks]" value="{{ invoiceadmissioninventoryitem.remarks }}" class="form-control">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[admission_item][{{k}}][total_price]" value="{{ invoiceadmissioninventoryitem.amount }}" class="form-control total-price" readonly="">
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                {% endif %}
+                                                {% if  invoice.invoiceservices|length  %}
+                                                    {% for k, invoiceService in invoice.invoiceservices %}
+                                                        <tr>
+                                                            <td>
+                                                                <a data-id="4" data-type="service" class="remove" href="javascript:void(0);">
+                                                                    <i style="color:red;margin-right:5px;" class="fa fa-times" aria-hidden="true"></i>
+                                                                </a>
+                                                            {{ invoiceService.service.description}}
+                                                                <input type="hidden" name="invoice[service][{{k}}][id]" value="{{ invoiceService.service.id}}" class='services'>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[service][{{k}}][price]" value="{{ invoiceService.service.price }}" class="form-control price" readonly="">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[service][{{k}}][quantity]" value="{{ invoiceService.quantity }}" class="form-control amt quantity has-computation " required="">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[service][{{k}}][percent_discount]" value="{{ invoiceService.discount }}" class="form-control amt disc has-computation">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[service][{{k}}][remarks]" value="{{ invoiceService.remarks }}" class="form-control">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[service][{{k}}][total_price]" value="{{ invoiceService.amount }}" class="form-control total-price" readonly="">
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                {% endif %}
+                                                {% if  invoice.invoiceinventoryitems|length  %}
+                                                    {% for k, inventoryItem in invoice.invoiceinventoryitems %}
+                                                        <tr>
+                                                            <td>
+                                                                <a data-id="4" data-type="item" class="remove" href="javascript:void(0);">
+                                                                    <i style="color:red;margin-right:5px;" class="fa fa-times" aria-hidden="true"></i>
+                                                                </a>
+                                                            {{ inventoryItem.inventoryitem.item.description}}
+                                                                <input type="hidden" name="invoice[item][{{k}}][id]" value="{{ inventoryItem.inventoryitem.id}}" class='items'>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[item][{{k}}][price]" value="{{ inventoryItem.inventoryitem.sellingprice }}" class="form-control price" readonly="">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[item][{{k}}][quantity]" value="{{ inventoryItem.quantity }}" class="form-control amt quantity has-computation " required="">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[item][{{k}}][percent_discount]" value="{{ inventoryItem.discount }}" class="form-control amt disc has-computation">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[item][{{k}}][remarks]" value="{{ inventoryItem.remarks }}" class="form-control">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" name="invoice[item][{{k}}][total_price]" value="{{ inventoryItem.amount }}" class="form-control total-price" readonly="">
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    
+                                                {% endif %}
+                                                
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="5" class="text-right">Grand Total Price :</td>
+                                                    <td ><input type="text" class="form-control" name='invoice[amount]' value="" id="amount" readonly> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" class="text-right">Disc % :</td>
+                                                    <td ><input type="text" class=" form-control amt" name='invoice[percent_discount]' value="{{ invoice.discount and invoice.discount != null  ? invoice.discount : 0.00 }}"  id="disc"> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" class="text-right">Payment Amount:</td>
+                                                    <td >
+                                                        <input type="text" class="form-control"  value="{{ invoice.totalPayment is defined ? invoice.totalPayment|number_format(2) : 0.00 }}"  readonly>
+                                                        <input type="hidden" class="amt form-control"  value="{{ invoice.grandTotal is defined ? invoice.grandTotal|number_format(2) : 0.00 }}"  id="totalPayment" readonly>
+                                                    </td>
+                                                </tr>
+
+                                                {% if invoice.status == 'Paid Payment' %}
+                                                    <tr>
+                                                        <td colspan="5" class="text-right">Reimbursed Amount:</small></td>
+                                                        <td>
+                                                            <input type="text" class="form-control"  value="{{ invoice.totalReimbursePayment }}" id="reimbursed_amount" readonly>
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                                <tr>
+                                                    <td colspan="5" class="text-right">Remaining Balance:</small></td>
+                                                    <td >
+                                                        <input type="text" class="form-control" name='invoice[grand_total]' value="0.00" id="grand-total" readonly>
+                                                        {% if invoice.status == 'Paid Payment' and  invoice.amountdue < 0 %}
+                                                            <small> <a href='javascript:void(0);' class='href-modal' data-target='reimbursed-payment-form' data-invoiceId="{{ invoice.idencoded }}">Reimbursed </a>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class='col-5'>
+                                    <div class='invoice-item mt-5'>
+                                        
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class='row'>
+                            
+                            <div class='col-12'>
+                                    
+                                <div class="card-footer text-right">
+                                    {% if action == 'u' %}
+                                        <a href='javascript:void(0);' class='btn btn-success href-modal' data-target='payment-form' data-invoiceId="{{ invoice.idencoded }}">Pay</a>
+                                    {% endif %}
+                                    <button type="submit" class="btn just-continue btn-primary" name="action" value="{{ action }}"
+                                        data-message="Are you sure you want to save this information?">Submit</button>
+                                    {% if action == 'u' and (userData.type == 'Super Admin' or 'Invoice Delete' in userData.accesses) %}
+                                        <button type="submit" class="ask-continue btn  btn-danger" name="action" value="d"
+                                                data-message="Are you sure you want to delete this record?">Delete</button>
+                                    {% endif %}
+                                    <a href="{{ path('invoice_index') }}" class="button secondary btn btn-secondary">Back</a>
+                                </div>
+
+                                {{ form_widget(form.branch) }}
+                                {{ form_widget(form.action) }}
+                                {{ form_widget(form.id) }}
+                                {{ form_widget(form._token) }}
+                            </div>
+                        </div>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    {% include 'js.html.twig' %}
+
+   
+    <script language="javascript">
+        //<![CDATA[
+        $(document).ready(function(){
+            invoice_form.settings.formAction = "{{ action }}";
+            invoice_form.settings.clientAjaxAutocompleteUrl = "{{ path('client_autocomplete') }}";
+            invoice_form.settings.serviceAutcompleteUrl = "{{ path('service_autocomplete') }}";
+            invoice_form.settings.inventoryItemAutompleteUrl = "{{ path('inventory_item_autocomplete') }}";
+            invoice_form.settings.invoicePaymentFormAjaxUrl = "{{ path('payment_invoice_ajax_form') }}";
+            invoice_form.settings.invoiceReimbursedPaymentFormAjaxUrl = "{{ path('reimbursed_payment_invoice_ajax_form') }}";
+            invoice_form.settings.clientAjaxForm = "{{ path('client_ajax_form') }}";
+            invoice_form.init();
+        });
+        //]]>
+    </script>
+
+{% endblock %}

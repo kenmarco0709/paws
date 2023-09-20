@@ -1,0 +1,229 @@
+{% extends 'content.html.twig' %}
+
+{% block pageContent %}
+    
+   {% set Day = 1 %}
+   {% set medicalRecordDates = []  %}
+   {% for  admissionPet in billing.admission.admissionPets %}
+        {% for k, medicalRecord in admissionPet.medicalrecords %}
+            {% if medicalRecord.createdat|date('m/d/Y') not in medicalRecordDates %}
+            {% set medicalRecordDates = medicalRecordDates|merge([medicalRecord.createdat|date('m/d/Y')]) %}
+            {% endif %}
+        {% endfor %} 
+   {% endfor %}
+    <div class="content-wrapper" style="min-height: 847px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-12">
+                        <h1 class="m-0">{{ page_title }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class='container-fluid'>
+                <div class='row'>
+                    <div class='col-12'>
+                        <div class='invoice p-3 mb-3'>
+                            <div class="row invoice-info mb-3">
+                                 {% include 'flash_message.html.twig' %}
+                                <div class="col-sm-12 invoice-col">
+                                    <div class="row">
+                                        <div class="col-2">
+                                        
+                                            <strong>Admission # : </strong> {{ billing.admission.id}} </br>
+                                            <strong>Client : </strong> {{ billing.admission.client.fullname}} </br>
+                                            {# {% if billing.admission.admissiontype.description == 'Confinement' %}
+                                                <strong>Days Confine : </strong> {{ medicalRecordDates|length }} </br>
+                                                <strong>Price per day : </strong> {{  confimentService.price }} </br>
+                                                
+                                            {% endif %}
+                                             {% if billing.admission.admissiontype.description == 'Consultation' %}
+                                                <strong>Consultation Fee : </strong> {{  consultationService.price }} </br>                                                
+                                            {% endif %} #}
+                                        </div>
+                                         <div class="col-2">
+                                            <strong>Total Amount Due: </strong> {{ billing.amountdue }} </br>
+                                            <strong>Total Payment : </strong> {{ billing.totalPayment}} </br>
+                                            <strong>Remaining Balance : </strong> {{ billing.amountdue - billing.totalpayment}} </br>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-3">
+                                        <div class="col-12">
+                                            <h5><strong>Admission Details</strong></h5>
+                                            <div class='container-fluid'>
+                                                <div class='row'>
+                                                    <div class='col-12'>
+                                                        {% for admissionPet in billing.admission.admissionpets %}
+                                                        <div class='mb-5'> <strong> Pet Name</strong>: {{ admissionPet.pet.name}}</div>
+                                                            {% if admissionPet.admission.admissiontype.description == 'Confinement' %}
+                                                        
+                                                                <div class='container-fluid'>
+                                                                    <div class='row'>
+                                                                                
+                                                                        {% for k, medicalDate in medicalRecordDates %}
+                                                                            <div class='col-12 mb-3'>
+                                                                                <div ><strong>Day: </strong> {{ k + 1 }}</div> 
+                                                                                <div><strong> Services</strong></div>
+
+                                                                                <div>
+                                                                                    <table class='table'>
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <td>Description</td>
+                                                                                                <td>Price</td>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            {% for k, medicalRecord in admissionPet.medicalrecords %}
+                                                                                                {% if  medicalRecord.createdAt|date('m/d/Y') == medicalDate %}
+                                                                                                    {% for service in medicalRecord.medicalRecordServices %}
+                                                                                                        <tr>
+                                                                                                            <td>{{ service.service.description}}</td>
+                                                                                                            <td>{{ service.service.price}}</td>
+                                                                                                        </tr>
+                                                                                                    {% endfor %}
+                                                                                                {% endif %}
+                                                                                            {% endfor  %}
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </div>  
+                                                                                <div><strong> Items</strong></div>
+
+                                                                                <div>
+                                                                                    <table class='table'>
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <td>Description</td>
+                                                                                                <td>Quantity</td>
+                                                                                                <td>Price</td>
+                                                                                                <td>Total Price</td>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            {% for k, medicalRecord in admissionPet.medicalrecords %}
+                                                                                                {% if  medicalRecord.createdAt|date('m/d/Y') == medicalDate %}
+                                                                                                    {% for item in medicalRecord.medicalRecordItems %}
+                                                                                                        <tr>
+                                                                                                            <td>{{ item.inventoryitem.item.description}}</td>
+                                                                                                            <td>{{ item.inventoryitem.sellingprice}}</td>
+                                                                                                            <td>{{ item.quantity}}</td>
+                                                                                                            <td>{{ item.quantity * item.inventoryitem.sellingprice }}</td>
+                                                                                                        </tr>
+                                                                                                    {% endfor %}
+                                                                                                {% endif %}
+                                                                                            {% endfor  %}
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </div> 
+                                                                            </div>  
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                </div>
+                                                        {% else %}   
+                                                            <div class='container-fluid'>
+                                                                <div class='row'>
+                                                                    <div class='col-12 mb-3'>
+                                                                        <div><strong> Services</strong></div>
+
+                                                                        <div>
+                                                                            <table class='table'>
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <td>Description</td>
+                                                                                        <td>Price</td>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    {% for k, medicalRecord in admissionPet.medicalrecords %}
+                                                                                            {% for service in medicalRecord.medicalRecordServices %}
+                                                                                                <tr>
+                                                                                                    <td>{{ service.service.description}}</td>
+                                                                                                    <td>{{ service.service.price}}</td>
+                                                                                                </tr>
+                                                                                            {% endfor %}
+                                                                                    {% endfor  %}
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>  
+                                                                        <div><strong> Items</strong></div>
+
+                                                                        <div>
+                                                                            <table class='table'>
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <td>Description</td>
+                                                                                        <td>Quantity</td>
+                                                                                        <td>Price</td>
+                                                                                        <td>Total Price</td>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    {% for k, medicalRecord in admissionPet.medicalrecords %}
+                                                                                            {% for item in medicalRecord.medicalRecordItems %}
+                                                                                                <tr>
+                                                                                                    <td>{{ item.inventoryitem.item.description}}</td>
+                                                                                                    <td>{{ item.inventoryitem.sellingprice}}</td>
+                                                                                                    <td>{{ item.quantity}}</td>
+                                                                                                    <td>{{ item.quantity * item.inventoryitem.sellingprice }}</td>
+                                                                                                </tr>
+                                                                                            {% endfor %}
+                                                                                    {% endfor  %}
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div> 
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}    
+                                                        {% endfor %}   
+                                                    </div>
+                                                    {# <div class='col-6'>
+                                                        <h5><strong>Payments</strong></h5>
+                                                        <div>
+                                                            {% if userData.type == 'Super Admin' or 'Billing Details Payment New' %} 
+                                                                <div class="text-right"><a href="{{ path('billing_payment_form', {billingId: billing.idencoded, action : 'n' , id : '0' })}}">New Payment</a></div>
+                                                             {% endif %}
+                                                            <table class='table' id='admission-details-payment'>
+                                                                <thead>
+                                                                    <tr>
+                                                                        <td>Date</td>
+                                                                        <td>Payment Type</td>
+                                                                        <td>Amount</td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                </thead>
+                                                            </table>
+                                                        </div>
+                                                        
+                                                    </div>      #}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    {% include 'js.html.twig' %}
+
+   
+    <script language="javascript">
+        //<![CDATA[
+        $(document).ready(function(){
+
+                billingdetails.settings.paymentAjaxListUrl = "{{ path('billing_payment_ajax_list')}}";
+                billingdetails.settings.billingId = "{{ billing.idencoded }}";
+                billingdetails.init();
+        });
+        //]]>
+    </script> 
+
+{% endblock %}

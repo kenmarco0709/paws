@@ -1,0 +1,85 @@
+{% set userData = app.session.get('userData') %} 
+
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{ page_title }}</h5>
+</div>
+<div class="modal-body">
+    <div class="card card-primary">
+         <div class="alert alert-danger errors d-none" role="alert" >
+       
+        </div>
+        <div class="alert alert-success success d-none" role="alert" >
+       
+        </div>
+        <div class="card-body">
+            <form id="form">
+                <div class="form-group">
+                    {{ form_label(form.foster_name) }}
+                    {{ form_widget(form.foster_name) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.foster_contact) }}
+                    {{ form_widget(form.foster_contact) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.foster_address) }}
+                    {{ form_widget(form.foster_address) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.foster_email_address) }}
+                    {{ form_widget(form.foster_email_address) }}
+                </div>
+                <div class="card-footer text-right">
+                    <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn just-continue btn-primary" name="action" value="{{ action }}" data-message="Are you sure you want to save this information?">Submit</button>
+                </div>
+
+                {{ form_widget(form.action) }}
+                {{ form_widget(form.id) }}
+                {{ form_widget(form._token) }}
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    
+    var shelterAdmissionFosteredFormProcessUrl = "{{ path('shelter_admission_fostered_ajax_form_process')}}";
+    global.init();
+
+
+    $('.close-modal').unbind('click').bind('click',function(){
+        $('.modal').modal('hide');
+    });
+
+    $('#form').submit(function(e){
+
+        e.preventDefault();
+        _this = $(this);
+        _this.find(':input[type=submit]').prop('disabled', true);
+        var formData = $(this).serialize();
+        $.ajax({
+            url: shelterAdmissionFosteredFormProcessUrl,
+            data: formData, 
+            type: "post",
+            dataType: "JSON",
+            success: function(r){
+                if(r.success){
+ 
+                    $.toaster({ message : r.msg, title : '', priority : 'success' });
+                    $('.modal').modal('hide');
+
+                    if(typeof shelter_admission_details  != 'undefined'){
+                        shelter_admission_details.loadDetailsPart();
+                        shelter_admission_details.removeActionBtn();
+                    }
+
+                } else {
+                    $.toaster({ message : r.msg, title : '', priority : 'danger' });
+                }
+            }
+        });
+    });
+</script>

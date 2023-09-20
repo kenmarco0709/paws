@@ -1,0 +1,70 @@
+{% extends 'content.html.twig' %}
+
+{% block pageContent %}
+    
+    <div class="content-wrapper" style="min-height: 847px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Manage {{ page_title }}</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item active">{{ page_title }}</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                {% include 'flash_message.html.twig' %}
+                                <div  class="dataTables_wrapper dt-bootstrap4">
+                                   <div class='row'>
+                                       <div class="col-6">
+                                            <form action="{{ path('schedule_reschedule')}}" method="POST">
+                                                <div class='container'>
+                                                    <div class='row'>
+                                                        <label class="col-2">From Date</label>
+                                                        <div class="col-sm-4">
+                                                            <input type="text" id="startDate" class='form-control datepicker' name='schedule[start_date]' required/>
+                                                        </div>
+                                                        <label class="col-2">To Date</label>
+                                                        <div class="col-sm-4">
+                                                            <input type="text" id="endDate" class='form-control datepicker' name='schedule[end_date]' required/>
+                                                        </div>
+                                                        <div class='col-12 text-right mt-3'>
+                                                           <button type="submit" class="ask-continue btn  btn-danger" 
+                                                             data-message="Are you sure you want re-schedule all this record?">Re-schedule</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                       </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    {% include 'js.html.twig' %}
+
+    <script language="javascript">
+        //<![CDATA[
+        $(document).ready(function(){
+            schedule.settings.ajaxUrl = '{{ path('schedule_ajax_list') }}';
+            schedule.init();
+        });
+        //]]>
+    </script>
+{% endblock %}

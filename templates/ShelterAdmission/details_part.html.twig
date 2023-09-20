@@ -1,0 +1,68 @@
+{% if part == 'admInfo' %}
+    <div><strong>Admission #: </strong> {{ shelterAdmission.id}}</div>
+    <div><strong>Admission Type: </strong> {{ admissionTypes[shelterAdmission.admissiontype]}}</div>
+    <div><strong>Facility: </strong> {{ shelterAdmission.facility.description}}</div>
+    <div><strong>Admission Date: </strong> {{ shelterAdmission.admissiondate|date('m/d/Y')}}</div>
+    <div><strong>Foster Name: </strong> {{ shelterAdmission.fostername}}</div>
+    <div><strong>Foster Contact No.: </strong> {{ shelterAdmission.fostercontact}}</div>
+    <div><strong>Foster Address: </strong> {{ shelterAdmission.fosteraddress}}</div>
+    <div><strong>Foster E-Address: </strong> {{ shelterAdmission.fosteremailaddress}}</div>
+    <div><strong>Rescuer Name: </strong> {{ shelterAdmission.rescuername}}</div>
+    <div><strong>Rescuer Contact No.: </strong> {{ shelterAdmission.rescuercontact}}</div>
+    <div><strong>Rescue Date: </strong> {{ shelterAdmission.rescuedate|date('m/d/Y')}}</div>
+    <div><strong>Rescue Place: </strong> {{ shelterAdmission.rescueplace}}</div>
+    <div><strong>Rescue Story: </strong> {{ shelterAdmission.rescuestory}}</div>
+    <div><strong>Returned Reason: </strong> {{ shelterAdmission.returnedreason}}</div>
+    <div><strong>Returned Date: </strong> {{ shelterAdmission.returneddate|date('m/d/Y')}}</div>
+    {% if shelterAdmission.status == 'Adopted' %}
+        <div><strong>Adopted Name: </strong> {{ shelterAdmission.adoptername}}</div>
+        <div><strong>Adopter Contact No.: </strong> {{ shelterAdmission.adoptercontact}}</div>
+        <div><strong>Adopter Address: </strong> {{ shelterAdmission.adopteraddress}}</div>
+        <div><strong>Adopter Email Address: </strong> {{ shelterAdmission.adopteremailaddress}}</div>
+        <div><strong>Adoption Date: </strong> {{ shelterAdmission.adoptiondate|date('m/d/Y')}}</div>
+    {% endif %}
+    <div><strong>Status: </strong> {{ shelterAdmission.status}}</div>
+    <hr>
+{% elseif part == 'petInfo' %}
+    <div><strong>Name: </strong> {{ shelterAdmission.pet.name}}</div>
+    <div><strong>Species: </strong> {{ shelterAdmission.pet and shelterAdmission.pet.species ? shelterAdmission.pet.species.description : ''}}</div>
+    <div><strong>Breed: </strong>  {{ shelterAdmission.pet and shelterAdmission.pet.breed ? shelterAdmission.pet.breed.description : ''}}</div>
+    <div><strong>Gender: </strong>  {{ shelterAdmission.pet.gender }}</div>
+    <div><strong>Aprroximate Age: </strong>  {{ shelterAdmission.pet.birthdate ? shelterAdmission.pet.age : (shelterAdmission.pet.approximateage ? shelterAdmission.pet.approximateage : '')  }}</div>
+    <div><strong>Color Markings: </strong>  {{ shelterAdmission.pet.colormarkings }}</div>
+    <div><strong>Is Deceased: </strong>  {{ shelterAdmission.pet.isdeceased ? 'Yes' : 'No' }}</div>
+    {% if shelterAdmission.pet.isdeceased %}
+        <div><strong>Caused of death: </strong>  {{ shelterAdmission.pet.causeofdeath }}</div>
+    {% endif %}
+    <div><strong>Is Fixed: </strong>  {{ shelterAdmission.pet.isfixed ? 'Yes' : 'No' }}</div>
+    <div><strong>Has Cruelty File: </strong>  {{ shelterAdmission.pet.hasCruelFile ? 'Yes' : 'No' }}</div>
+    <hr>
+
+    {# <div class='container-fluid'>
+        <div class='row'>
+            <div class='col-6'>
+                <div style='width:100%' class='text-center'><strong>Before</strong></div>
+                <div style='width:100%' class='text-center'>
+                    <div class='img-container'>
+                         {% if shelterAdmission.pet.beforeFileWebPath != '' %}
+                            <img style='max-width:100%' src='{{ shelterAdmission.pet.beforeFileWebPath}}' />
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+               <div class='col-6'>
+                <div style='width:100%' class='text-center'><strong>After</strong></div>
+                <div style='width:100%' class='text-center'>
+                    <div class='img-container'>
+                        {% if shelterAdmission.pet.afterFileWebPath != '' %}
+                            <img style='max-width:100%' src='{{ shelterAdmission.pet.afterFileWebPath}}' />
+
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div> 
+    </div> #}
+{% endif %}

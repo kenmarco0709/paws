@@ -1,0 +1,161 @@
+{% extends 'content.html.twig' %}
+
+{% block pageContent %}
+    
+    <div class="content-wrapper" style="min-height: 847px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-12">
+                        <h1 class="m-0">{{ page_title }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <form method="POST" action="{{ path('schedule_form' , { action :action , id: id})}}" enctype='multipart/form-data'>
+                {% include 'flash_message.html.twig' %}
+                <div class="container-fluid">
+                    <div class='row'>
+                        <div class='col-5'>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class='form-group row'>
+                                        {{ form_label(form.admission_type_desc)}}
+                                        <div class='col-9'>
+                                            {{ form_widget(form.admission_type_desc)}}
+                                            {{ form_widget(form.admission_type)}}
+                                        </div>
+                                    </div>
+                                    <div class='form-group row'>
+                                        {{ form_label(form.schedule_date)}}
+                                        <div class='col-9'>
+                                            {{ form_widget(form.schedule_date, { value : dateToSched != '' ? dateToSched : schedule.scheduledate|date("m/d/Y") })}}
+                                        </div>
+                                    </div>
+                                    <div class='form-group row'>
+                                        {{ form_label(form.attending_vet_desc)}}
+                                        <div class='col-9'>
+                                            {{ form_widget(form.attending_vet_desc)}}
+                                            {{ form_widget(form.attending_vet)}}
+
+                                        </div>
+                                    </div>
+
+                                    {% if action == 'u' %}
+                                        <div class='form-group row'>
+                                            {{ form_label(form.status)}}
+                                            <div class='col-9'>
+                                                {{ form_widget(form.status)}}
+
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                   
+                                    {% if userData.type == 'Super Admin' or 'Schedule Client New' in userData.accesses %}
+                                        <div class='text-right'><a href='javascript:void(0);' class='href-modal' data-type='client-form'>New Client</a></div>
+                                    {% endif %}
+                                    <div class='form-group row'>
+                                                {{ form_label(form.client_desc)}}
+                                        <div class='col-9'>
+                                            {{ form_widget(form.client_desc)}}
+                                            {{ form_widget(form.client)}}
+                                        </div>
+                                    </div>
+                                        <div class='form-group row'>
+                                                {{ form_label(form.remarks)}}
+                                        <div class='col-9'>
+                                            {{ form_widget(form.remarks)}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-7'>
+                            <div class="card" style="min-height:300px;">
+                                <div class="card-body">
+                                    {% if action  != 'u' %}
+
+                                        {% if userData.type == 'Super Admin' or  'Schedule Pet New' in userData.accesses %}
+                                            <div class='text-right'><a href='javascript:void(0);' class='href-modal' data-type='pet-form'>New Pet</a></div>
+                                        {% endif %}
+                                        <h5>Please choose atleast 1 pet.</h5>
+                                        <div class='client-pet-container'>
+                                            {% if action  == 'u' %}
+                                                {% if schedule.schedulepets %}
+                                                    <div class="icheck-primary">
+                                                        <input type="checkbox" id="pet_1" name="schedule_form[schedule_pets][1][pet]" value="35">
+                                                        <label for="pet_1">test1 test123</label>
+                                                </div>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <h5>Pets</h5>
+                                        <div class='client-pet-container'>
+                                            {% if action  == 'u' %}
+                                                {% if schedule.schedulepets %}
+                                                   {% for schedulepet in schedule.schedulepets %}
+                                                     <div class="icheck-primary">
+                                                        <label for="pet_1">{{schedulepet.pet.name}}</label>
+                                                     </div>
+                                                   {% endfor %}
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+
+                                    {% endif %}
+                                    
+                                </div>
+                            </div>
+                                
+                            <div class="card-footer text-right">
+                                {% if schedule.status != 'Admitted'%}
+                                       <button type="submit" class="btn just-continue btn-primary" name="action" value="{{ action }}"
+                                    data-message="Are you sure you want to save this information?">Submit</button>
+                                    {% if action == 'u' and (userData.type == 'Super Admin' or 'Schedule Delete' in userData.accesses) %}
+                                        <button type="submit" class="ask-continue btn  btn-danger" name="action" value="d"
+                                                data-message="Are you sure you want to delete this record?">Delete</button>
+                                                {% if schedule.scheduledate|date('Y/m/d') >= 'now'|date('Y/m/d') %}
+                                                    <a href="{{ path('schedule_admit', {id : schedule.idencoded}) }}" class="button secondary btn btn-success">Admit</a>
+                                                {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                             
+                                <a href="{{ path('schedule_index') }}" class="button secondary btn btn-secondary">Back</a>
+                            </div>
+
+                            {{ form_widget(form.branch) }}
+                            {{ form_widget(form.action) }}
+                            {{ form_widget(form.id) }}
+                            {{ form_widget(form._token) }}
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    {% include 'js.html.twig' %}
+
+   
+    <script language="javascript">
+        //<![CDATA[
+        $(document).ready(function(){
+            schedule_form.settings.formAction = "{{ action }}";
+            schedule_form.settings.serviceAutcompleteUrl = "{{ path('service_autocomplete') }}";
+            schedule_form.settings.vetAutocompleteUrl = "{{ path('user_vet_autocomplete') }}";
+            schedule_form.settings.clientAjaxAutocompleteUrl = "{{ path('client_autocomplete') }}";
+            schedule_form.settings.scheduleTypeAjaxAutocompleteUrl = "{{ path('admission_type_autocomplete') }}";
+            schedule_form.settings.inventoryItemAutompleteUrl = "{{ path('inventory_item_autocomplete') }}";
+            schedule_form.settings.clientAjaxForm = "{{ path('client_ajax_form') }}";
+            schedule_form.settings.clientPetAjaxForm = "{{ path('pet_ajax_form')}}";    
+            schedule_form.settings.clientPetListUrl = "{{ path('client_pet_list')}}";  
+            schedule_form.settings.vetAutocompleteUrl = "{{ path('user_vet_autocomplete') }}";
+
+            schedule_form.init();
+        });
+        //]]>
+    </script>
+
+{% endblock %}

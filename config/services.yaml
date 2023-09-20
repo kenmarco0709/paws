@@ -1,0 +1,37 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    app.jwt_secret: '%env(JWT_SECRET)%'
+    app.jwt_issuer: '%env(JWT_ISSUER)%'
+    app.jwt_aud: '%env(JWT_AUD)%'
+    app.jwt_algo: '%env(JWT_ALGO)%'
+    app.global_url: 'http://dev.vetcloud.com/'
+services:
+    # default configuration for services in *this* file
+    Symfony\Component\DependencyInjection\ContainerInterface: '@service_container'
+    Doctrine\Persistence\ObjectManager: '@doctrine.orm.default_entity_manager'
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    App\Form\AuthForm:
+        autowire: true
+    App\Service\AuthService:
+        autowire: true
+    App\Service\InventoryService:
+        autowire: true  
+    App\Form\UserForm:
+        autowire: true         
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones

@@ -1,0 +1,88 @@
+{% extends 'content.html.twig' %}
+
+{% block pageContent %}
+    
+    <div class="content-wrapper" style="min-height: 847px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">{{ page_title }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div  class="dataTables_wrapper dt-bootstrap4">
+                                    <div class="row mb-3">
+                                        <div class="col-6">
+                                            <div class='container'>
+                                                <div class='row'>
+                                                    <label class="col-2">Start Date</label>
+                                                    <div class="col-sm-4">
+                                                        <input type="text" id="startDate" class='form-control datepicker' />
+                                                    </div>
+                                                    <label class="col-2">End Date</label>
+                                                    <div class="col-sm-4">
+                                                        <input type="text" id="endDate" class='form-control datepicker' />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class='container'>
+                                                <div class='row'>
+                                                    <div class='col-12'>
+                                                        <div class='text-left'>
+                                                            <a href="javascript:void(0);" class='btn btn-danger btn-report' data-url="{{ path('report_sales_income_pdf') }}"> PDF</a>
+                                                            <a href="javascript:void(0);" class='btn btn-success btn-report' data-url="{{ path('report_report_sales_income_csv')}}"> CSV</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                     <div class="row">
+                                        <div class="col-sm-12">
+                                            <table id="sales-income-datalist" class="table dataTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Invoice #</th>
+                                                        <th>Client</th>
+                                                        <th>Gross</th>
+                                                        <th>Net</th>
+                                                        <th>Payment Amount</th>
+                                                        <th>Receivable Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    {% include 'js.html.twig' %}
+
+    <script language="javascript">
+        //<![CDATA[
+            $(document).ready(function(){
+                sales_income.settings.ajaxUrl = '{{ path('report_sales_income_ajax_list') }}';
+                sales_income.settings.breakdownUrl = '{{ path('report_sales_income_breakdown') }}';
+                sales_income.init();
+            });
+        //]]>
+    </script>
+{% endblock %}

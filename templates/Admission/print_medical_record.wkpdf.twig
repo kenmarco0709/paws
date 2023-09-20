@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Calibri:400,700,400italic,700italic">
+	
+	<style>
+
+        table thead tr td{
+			font-family: 'Calibri'!important;
+			font-size: 22px;
+			border: 2px solid #000;
+			padding:5px;
+			margin:0px!important;
+			border-spacing: -10px!important;
+            font-weight: 600;
+			
+		}
+
+        table  tr td{
+			font-family: 'Calibri'!important;
+			font-size: 22px;
+			margin:0px!important;
+			border-spacing: -10px!important;
+			
+		}
+
+        .text-center{
+            text-align:center;
+        }
+
+        .text-right{
+            text-align:right;
+        }
+
+        .bold{
+            font-weight: 600;
+        }
+
+		table { border-collapse: collapse; }
+	</style>
+</head>
+<body style="font-family:Calibri;font-size:22px;">
+
+    <div style="width:1200px;clear:both;">
+        <div style="width:300px;float:left">
+            {% if companyLogo != '' %}
+                <img src='data:image/jpeg;base64,{{ companyLogo }}' style="width:100%;"/>
+            {% endif %}
+        </div>
+         <div style="width:980;float:right">
+            <div class='text-right bold' style='font-size:30px!important;font-weight:bold;'><h2>Pet Medical Record</h2></div>
+            <div class='text-right bold'>{{ medicalRecord.admissionpet.admission.branch.company.description|upper }}</div>
+            <div class='text-right bold'>{{ medicalRecord.admissionpet.admission.branch.company.address|upper }}</div>
+            <div class='text-right bold'>{{ medicalRecord.admissionpet.admission.branch.company.contactno|upper }}</div>
+            <div class='text-right bold'>{{ medicalRecord.admissionpet.admission.branch.company.email }}</div>
+        </div>
+    </div>
+    <div style="clear:both"></div>
+    <div style='margin-top:20px;'>
+        <table  width="100%">
+            <tbody>
+                <tr>
+                    <td><strong>SOAP # :</strong> {{ medicalRecord.id }}</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td><strong>Owner :</strong> {{ medicalRecord.admissionpet.admission.client.fullname }}</td>
+                    <td><strong>Date :</strong>{{ "now"|date('m/d/Y') }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Pet :</strong> {{ medicalRecord.admissionpet.pet.name }}</td>
+                    <td><strong>Pet Age :</strong> {{ medicalRecord.admissionpet.pet.birthdate ?   medicalRecord.admissionpet.pet.age : '' }}</td>
+                </tr>
+                  <tr>
+                    <td><strong>Breed :</strong> {{ medicalRecord.admissionpet.pet.breed ? medicalRecord.admissionpet.pet.breed.description : '' }}</td>
+                    <td><strong>Gender :</strong> {{ medicalRecord.admissionpet.pet.gender }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style='margin-top:20px;'>
+        <div>
+            <h2 clas='bold'> Clinical Exam</h2>
+            <div>
+                <strong>Weight</strong> : {{ medicalRecord.weight ? medicalRecord.weight : 'n/a' }}
+            </div>
+            <div>
+                <strong>Temperature</strong> :  {{ medicalRecord.temperature ? medicalRecord.temperature : 'n/a'}}
+            </div>
+        </div>   
+    </div>
+    <div style='margin-top:20px;'>
+        <div>
+            <h2 clas='bold'> Primary Complain/ History</h2>
+            <div>
+                 {{ medicalRecord.primarycomplain ? medicalRecord.primarycomplain : 'n/a' }}
+            </div>
+        </div>   
+    </div>
+     <div style='margin-top:20px;'>
+        <div>
+            <h2 clas='bold'> Interpretations</h2>
+            <div>
+                 {{ medicalRecord.medicalinterpretation ? medicalRecord.medicalinterpretation : 'n/a' }}
+            </div>
+        </div>   
+    </div>
+    <div style='margin-top:20px;'>
+        <div>
+            <h2 clas='bold'> Diagnosis</h2>
+            <div>
+                 {{ medicalRecord.diagnosis ? medicalRecord.diagnosis : 'n/a' }}
+            </div>
+        </div>   
+    </div>
+     <div style='margin-top:20px;'>
+        <div>
+            <h2 clas='bold'> Remarks</h2>
+            <div>
+                 {{ medicalRecord.remarks ? medicalRecord.remarks : 'n/a' }}
+            </div>
+        </div>   
+    </div>
+     <div style='margin-top:20px;'>
+        <div>
+            <h2 clas='bold'> Prescriptions</h2>
+            <div>
+                 {% if  medicalRecord.medicalrecordprescriptioninventoryitems|length %}
+                    {% for prescriptionitem in medicalRecord.medicalrecordprescriptioninventoryitems %}
+                        <div> {{ prescriptionitem.inventoryitem.item.description  ~ ' '  ~  prescriptionitem.quantity ~ ' '  ~  prescriptionitem.remarks  }}  </div>
+                    {% endfor %}
+                 {% else %}
+                    n/a
+                 {% endif %}
+            </div>
+        </div>   
+    </div>
+    <div style='margin-top:20px;'>
+        <div>
+            <h2 clas='bold'> Treatment</h2>
+            <div>
+                 {% if  medicalRecord.medicalrecordservices|length %}
+                    {% for medicalrecordservice in medicalRecord.medicalrecordservices %}
+                        <div> {{ medicalrecordservice.service.description  }}  </div>
+                    {% endfor %}
+                 {% else %}
+                    n/a
+                 {% endif %}
+            </div>
+        </div>   
+    </div>
+    <div style="width:1200px;margin-top:120px">
+        <div style="float:right;">
+            <div style="width:300px;text-align:center;">{{ medicalRecord.admissionpet.admission.attendingvet.fullname}}</div>
+            <div style="width:300px;text-align:center;border-top:1px solid #000000;"><strong>Attending Veterinarian</strong></div>
+                <table style="margin-top:20px;">
+            <tr>
+                <td class="text-right"><strong>PRC License No.:</strong></td>
+                <td style="border-bottom:1px solid #000000!important;width:120px;">{{ medicalRecord.admissionpet.admission.attendingvet.prcNo }}</td>
+            </tr>
+            <tr>
+                <td class="text-right"><strong>PTR:</strong></td>
+                <td style="border-bottom:1px solid #000000!important;width:120px;">{{ medicalRecord.admissionpet.admission.attendingvet.ptr }}</td>
+            </tr>
+            <tr>
+                <td class="text-right"><strong>TIN:</strong></td>
+                <td style="border-bottom:1px solid #000000!important;width:120px;">{{ medicalRecord.admissionpet.admission.attendingvet.tinno }}</td>
+            </tr>
+            <tr>
+                <td class="text-right"><strong>S2:</strong></td>
+                <td style="border-bottom:1px solid #000000!important;width:120px;">{{ medicalRecord.admissionpet.admission.attendingvet.s2 }}</td>
+            </tr>
+        </table>
+        </div>
+    
+    </div>
+</body>
+</html>

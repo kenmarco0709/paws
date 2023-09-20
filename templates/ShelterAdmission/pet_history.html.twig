@@ -1,0 +1,83 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel"><strong>{{ page_title }}</strong></h5>
+</div>
+<div class="modal-body">
+    <div class="card card-primary">
+         <div class="alert alert-danger errors d-none" role="alert" >
+       
+        </div>
+        <div class="alert alert-success success d-none" role="alert" >
+       
+        </div>
+        <div class="card-body">
+           Name : {{ admissionPet.pet.name}} </br>
+           Breed : {{ admissionPet.pet.breed  ? admissionPet.pet.breed.description : ''}} </br>
+           Sex : {{ admissionPet.pet.gender}}</br>
+           Height : {{ admissionPet.pet.height}}
+           
+           <div class='table-container mt-5'>
+                <table class='table'>
+                    <thead>
+                        <tr>
+                            <td><strong>Date</strong></td>
+                            <td><strong>Medical Record Type</strong></td>
+                            <td><strong>Weight</strong></td>
+                            <td><strong>Temperature</strong></td>
+                            <td><strong>Primary Complain</strong></td>
+                            <td><strong>Interpretation</strong></td>
+                            <td><strong>Services</strong></td>
+                            <td><strong>Treatment</strong></td>
+                            <td><strong>Laboratory</strong></td>
+                            <td><strong>Remarks</strong></td>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                         {% for medicalRecord in admissionPet.medicalrecords %}
+                            <tr>
+                                <td>{{ medicalRecord.createdat|date('m/d/Y')}}</td>
+                                <td>{{ medicalRecord.admissionpet.admission.admissiontype.description}}</td>
+                                <td>{{ medicalRecord.weight}}</td>
+                                <td>{{ medicalRecord.temperature}}</td>
+                                <td>{{ medicalRecord.primarycomplain}}</td>
+                                <td>{{ medicalRecord.medicalInterPretation}}</td>
+                                <td> 
+                                    {% set serviceCtr =  medicalRecord.medicalRecordServices|length %}
+                                    {% for k, service in  medicalRecord.medicalRecordServices %}
+                                        {% if service.service.servicetype.description != 'Treatment' %}
+                                            {{ service.service.description}}
+                                        {% endif %}
+                                        {% if (k+ 1) != serviceCtr  %}
+                                        ,
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% set treatmentCtr =  medicalRecord.medicalRecordServices|length %}
+                                    {% for k, service in  medicalRecord.medicalRecordServices %}
+                                        {% if service.service.servicetype.description == 'Treatment' %}
+                                            {{ service.service.description}}
+                                        {% endif %}
+                                        {% if (k+ 1) != treatmentCtr  %}
+                                        ,
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% set laboratoryCtr =  medicalRecord.medicalRecordLaboratories|length %}
+                                    {% for k, laboratory in  medicalRecord.medicalRecordLaboratories %}
+                                        <a href="{{laboratory.fileWebPath}}" target='_blank'>{{ laboratory.parsedFiledDesc}}</a>    
+                                        {% if (k+ 1) != laboratoryCtr  %}
+                                        ,
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>{{ medicalRecord.remarks}}</td>
+                            </tr>
+                        {% endfor %}   
+                    <tbody>
+                </table>
+           </div>
+        </div>
+    </div>
+</div>

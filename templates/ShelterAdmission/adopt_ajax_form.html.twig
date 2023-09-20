@@ -1,0 +1,97 @@
+{% set userData = app.session.get('userData') %} 
+
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">{{ page_title }}</h5>
+</div>
+<div class="modal-body">
+    <div class="card card-primary">
+         <div class="alert alert-danger errors d-none" role="alert" >
+       
+        </div>
+        <div class="alert alert-success success d-none" role="alert" >
+       
+        </div>
+        <div class="card-body">
+            <form id="clientForm">
+                <div class="form-group">
+                    {{ form_label(form.adopter_name) }}
+                    {{ form_widget(form.adopter_name) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.adopter_contact) }}
+                    {{ form_widget(form.adopter_contact) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.adopter_address) }}
+                    {{ form_widget(form.adopter_address) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.adopter_email_address) }}
+                    {{ form_widget(form.adopter_email_address) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.adoption_date) }}
+                    {{ form_widget(form.adoption_date) }}
+                </div>
+                  <div class="form-group">
+                    {{ form_label(form.remarks) }}
+                    {{ form_widget(form.remarks) }}
+                </div>
+                <div class="card-footer text-right">
+                    <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Close</button>
+                    {# {% if action == 'u' and (userData.type == 'Super Admin' or 'Client Delete' in userData.accesses) %}
+                        <button type="submit" class="ask-continue btn  btn-danger" name="action" value="d"
+                                data-message="Are you sure you want to delete this record?">Delete</button>
+                    {% endif %} #}
+                   <button type="submit" class="btn just-continue btn-primary" name="action" value="{{ action }}" data-message="Are you sure you want to save this information?">Submit</button>
+                </div>
+
+                {{ form_widget(form.action) }}
+                {{ form_widget(form.id) }}
+                {{ form_widget(form._token) }}
+
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    
+    var shelterAdmissionAdoptFormProcessUrl = "{{ path('shelter_admission_adopt_ajax_form_process')}}";
+    global.init();
+
+
+    $('.close-modal').unbind('click').bind('click',function(){
+        $('.modal').modal('hide');
+    });
+
+    $('#clientForm').submit(function(e){
+
+        e.preventDefault();
+        _this = $(this);
+        _this.find(':input[type=submit]').prop('disabled', true);
+        var formData = $(this).serialize();
+        $.ajax({
+            url: shelterAdmissionAdoptFormProcessUrl,
+            data: formData, 
+            type: "post",
+            dataType: "JSON",
+            success: function(r){
+                if(r.success){
+ 
+                    $.toaster({ message : r.msg, title : '', priority : 'success' });
+                    $('.modal').modal('hide');
+
+                    if(typeof shelter_admission_details  != 'undefined'){
+                        shelter_admission_details.loadDetailsPart();
+                        shelter_admission_details.removeActionBtn();
+                    }
+
+                } else {
+                    $.toaster({ message : r.msg, title : '', priority : 'danger' });
+                }
+            }
+        });
+    });
+</script>
