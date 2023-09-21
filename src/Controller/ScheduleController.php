@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
 
 use App\Entity\ScheduleEntity;
 use App\Form\ScheduleForm;
@@ -26,8 +27,10 @@ use App\Entity\AdmissionEntity;
 use App\Entity\AdmissionPetEntity;
 use App\Entity\AdmissionTypeEntity;
 use App\Entity\ClientEntity;
+use App\Entity\ClientPetEntity;
 
-
+use App\Entity\BreedEntity;
+use App\Entity\PetEntity;
 
 
 
@@ -344,6 +347,153 @@ class ScheduleController extends AbstractController
                 'page_title' => $page_title
             ]
         );
+    }
+
+     /**
+     * @Route("/import", name="schedule_import")
+     */
+    public function import(Request $request, AuthService $authService)
+    {
+        if(!$authService->isLoggedIn()) return $authService->redirectToLogin();
+        if(!$authService->isUserHasAccesses(array('Schedule Import'))) return $authService->redirectToHome();
+        
+        if($request->getMethod() == 'POST'){
+            $file_mimes = array('text/x-comma-separated-values', 'text/comma-separated-values', 'application/octet-stream', 'application/vnd.ms-excel', 'application/x-csv', 'text/x-csv', 'text/csv', 'application/csv', 'application/excel', 'application/vnd.msexcel', 'text/plain', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            
+            if(isset($_FILES['items']['name']) && in_array($_FILES['items']['type'], $file_mimes)) {
+
+                $reader = new Csv();
+                $spreadsheet = $reader->load($_FILES['items']['tmp_name']);
+ 
+                $sheetData = $spreadsheet->getActiveSheet()->toArray();
+                array_shift($sheetData);
+
+                $em = $this->getDoctrine()->getManager();
+                $branch = $authService->getUser()->getBranch();
+
+                foreach($sheetData as $data){
+                    $f = $data[0];
+                    $l = $data[1];
+                    $pn = $data[13];
+                    $sd = $data[14];
+
+
+                    if(!empty($f) && !empty($l)){
+                        $breed = !empty($data[10])  ? $data[10] : (!empty($data[11]) ? $data[11] : '');
+                  
+                        if(!empty($breed)){
+                
+                            $breedEnt = $em->getRepository(BreedEntity::class)->findOneBy(['description' => $breed, 'isDeleted' => false]);
+                            
+                            if(is_null($breedEnt)){
+                                $breedEnt =  new BreedEntity();
+                                $breedEnt->setCode($breed);
+                                $breedEnt->setDescription($breed);
+                                $em->persist($breedEnt);
+                                $em->flush();
+                            }
+
+                    
+                        }
+
+                        $client = $em->getRepository(ClientEntity::class)->findOneBy(['firstName' => $f, 'lastName' => $l, 'branch' => $branch, 'isDeleted' => false]);
+
+                        if(is_null($client)){
+
+                            $client = new ClientEntity();
+                            $client->setFirstName($f);
+                            $client->setLastName($l);
+                            $client->setBranch($branch);
+                            $em->persist($client);
+                            $em->flush();
+
+                            $pet = new PetEntity();
+                            $pet->setName($pn);
+                            $pet->setBreed($breedEnt);
+                            $em->persist($pet);
+                            $em->flush();
+
+                            $clientPet =  new ClientPetEntity();
+                            $clientPet->setClient($client);
+                            $clientPet->setPet($pet);
+                            $em->persist($clientPet);
+                            $em->flush();
+                        } else {
+
+
+                            $pet = $em->getRepository(PetEntity::class)->findOneBy(['name' => $pn]);
+                            if(is_null($pet)){
+                          
+                                $pet = new PetEntity();
+                                $pet->setName($pn);
+                                $pet->setBreed($breedEnt);
+                                $em->persist($pet);
+                                $em->flush();
+
+                            }
+                            
+
+                            $clientPet = $em->getRepository(ClientPetEntity::class)->findOneBy(['client' => $client, 'pet' => $pet, 'isDeleted' => false]);
+                        
+                            if(is_null($clientPet)){
+                            
+                                $clientPet =  new ClientPetEntity();
+                                $clientPet->setClient($client);
+                                $clientPet->setPet($pet);
+                                $em->persist($clientPet);
+                                $em->flush();
+                            }
+                        }
+
+                        //Start Scheduling 
+                        $admissionType = $em->getRepository(AdmissionTypeEntity::class)->findOneBy(['description' => 'Spay/Neuter Surgery']);
+                        $schedule = $em->getRepository(ScheduleEntity::class)->getClientScheduleByDate($client, $admissionType, date('Y-m-d' , strtotime($sd)));
+
+                        if(!count($schedule)){
+                            
+                            $schedule = new ScheduleEntity();
+                            $schedule->setClient($client);
+                            $schedule->setBranch($branch);
+                            $schedule->setAdmissionType($admissionType);
+                            $schedule->setStatus('New');
+                            $schedule->setScheduleDate(new \Datetime(date('m/d/Y' , strtotime($sd))));
+                            $em->persist($schedule);
+                            $em->flush();
+                        } else {
+
+                            $schedule = $em->getRepository(ScheduleEntity::class)->find($schedule[0]['id']);
+
+                        }
+
+                        $schedulePet = $em->getRepository(SchedulePetEntity::class)->findOneBy(['pet' => $pet, 'schedule' => $schedule]);
+
+                        if(is_null($schedulePet)){
+
+                            $schedulePet = new SchedulePetEntity();
+                            $schedulePet->setPet($pet);
+                            $schedulePet->setSchedule($schedule);
+                            $em->persist($schedulePet);
+                            $em->flush();
+                        }
+                    }  
+                }
+
+                $this->get('session')->getFlashBag()->set('success_messages', 'Schedule successfully import.');
+
+            } else {
+
+                $this->get('session')->getFlashBag()->set('error_messages', 'Please put a valid CSV file.');
+
+            }
+
+        } else {
+
+            $this->get('session')->getFlashBag()->set('error_messages', 'Unauthorized request please call a system administrator.');
+
+        }
+
+
+       return $this->redirect($this->generateUrl('schedule_index'),302);
     }
 
     

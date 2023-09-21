@@ -94,7 +94,7 @@ var schedule = {
                     window.location = '/schedule/form/n/0?date=' + info.dateStr;
                 },
                 headerToolbar: {
-                    left  : 'prev,next today new re-schedule',
+                    left  : 'prev,next today new re-schedule import',
                     center: 'title',
                     right : 'dayGridMonth'
                 },
@@ -116,6 +116,17 @@ var schedule = {
         $('.fc-new-button').html('New Schedule');
         $('.fc-re-schedule-button').html('Re-schedule');
         $('.fc-re-schedule-button').addClass('btn-success');
+        $('.fc-import-button').html(
+            '<form method="POST" action="/schedule/import" enctype="multipart/form-data" id="uploadFileForm">' +
+                '<label for="uploadFile" class="btn btn-primary" style="margin:0;font-weight:500;">' +
+                   ' Import'+
+                '</label>' +
+                '<input id="uploadFile" type="file" name="items" style="display:none;" accept=".csv" />' +
+            '</form>'
+        );
+
+        $('.fc-import-button').css('padding', '0px');
+        
 
         $('.fc-new-button').unbind('click').bind('click',function(){
             window.location = '/schedule/form';
@@ -124,6 +135,11 @@ var schedule = {
         
         $('.fc-re-schedule-button').unbind('click').bind('click',function(){
             window.location = '/schedule/reschedule';
+        });
+
+        $('#uploadFile').unbind('change').bind('change',function(){
+            $('#uploadFileForm').submit();
+       
         });
     }
 };

@@ -243,6 +243,7 @@ Class AuthService {
                 array('label' => 'New', 'description' => 'Schedule New'),
                 array('label' => 'Admit', 'description' => 'Schedule Admit'),
                 array('label' => 'Delete', 'description' => 'Schedule Delete'),
+                array('label' => 'Import', 'description' => 'Schedule Import'),
                 array('label' => 'Client', 'description' => 'Schedule Client', 'children' => array(
                     array('label' => 'New', 'description' => 'Schedule Client New'),
                 )),

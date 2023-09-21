@@ -391,5 +391,28 @@ class ScheduleRepository extends \Doctrine\ORM\EntityRepository
         return $results;
     }
 
+    function getClientScheduleByDate($client, $admissionType, $date){
+
+        $sql = "
+            SELECT
+                s.`id`
+            FROM `schedule` s
+            WHERE s.`client_id` = ".$client->getId()."
+            AND s.`admission_type_id` = ".$admissionType->getId()."
+            AND s.`schedule_date` BETWEEN '".$date . " 00:00:00' AND '" .$date ." 23:59:59' 
+            LIMIT 1
+        ";
+
+
+        $query = $this->getEntityManager()->getConnection()->prepare($sql);
+
+ 
+
+        $res = $query->executeQuery();
+        $results = $res->fetchAllAssociative();
+
+        return $results;
+    }
+
 
 }

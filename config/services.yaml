@@ -8,7 +8,7 @@ parameters:
     app.jwt_issuer: '%env(JWT_ISSUER)%'
     app.jwt_aud: '%env(JWT_AUD)%'
     app.jwt_algo: '%env(JWT_ALGO)%'
-    app.global_url: 'http://dev.vetcloud.com/'
+    app.global_url: 'http://dev.paws.com/'
 services:
     # default configuration for services in *this* file
     Symfony\Component\DependencyInjection\ContainerInterface: '@service_container'
